@@ -120,13 +120,9 @@
   version = "v1.3.0"
 
 [[projects]]
-  digest = "1:129d070f960422efbd516792c4065a555a9270423f84957c36052ac20df44a29"
+  digest = "1:645cabccbb4fa8aab25a956cbcbdf6a6845ca736b2c64e197ca7cbb9d210b939"
   name = "github.com/spf13/cobra"
-  packages = [
-    ".",
-    "cobra",
-    "cobra/cmd",
-  ]
+  packages = ["."]
   pruneopts = "UT"
   revision = "ef82de70bb3f60c65fb8eebacbb2d122ef517385"
   version = "v0.0.3"
@@ -204,7 +200,6 @@
     "github.com/andygrunwald/go-jira",
     "github.com/mitchellh/go-homedir",
     "github.com/spf13/cobra",
-    "github.com/spf13/cobra/cobra",
     "github.com/spf13/viper",
   ]
   solver-name = "gps-cdcl"
