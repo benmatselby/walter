@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	jira "github.com/andygrunwald/go-jira"
 	"github.com/spf13/cobra"
@@ -23,9 +24,26 @@ var sprintIssuesCmd = &cobra.Command{
 			os.Exit(2)
 		}
 
-		for _, issue := range issues {
-			fmt.Println(fmt.Sprintf("* %s", issue.Fields.Summary))
+		items := make(map[string][]jira.Issue)
+
+		// Now build a map|slice|array (!) of
+		// BoardColumn => Items[]
+		for index := 0; index < len(issues); index++ {
+			item := issues[index]
+
+			key := item.Fields.Status.Name
+			items[key] = append(items[key], item)
 		}
+
+		asList := ""
+		for k, v := range items {
+			asList += "\n" + k + "\n"
+			asList += strings.Repeat("=", len(k)) + "\n"
+			for _, item := range v {
+				asList += fmt.Sprintf("* %s\n", item.Fields.Summary)
+			}
+		}
+		fmt.Println(asList)
 	},
 }
 
