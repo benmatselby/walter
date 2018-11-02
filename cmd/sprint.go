@@ -64,7 +64,6 @@ var sprintListCmd = &cobra.Command{
 	},
 }
 
-// sprintCmd represents the sprint command
 var sprintCmd = &cobra.Command{
 	Use:   "sprint",
 	Short: "Sprint related commands",

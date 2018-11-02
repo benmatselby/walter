@@ -9,10 +9,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// boardsCmd represents the boards command
-var boardsCmd = &cobra.Command{
-	Use:   "boards",
-	Short: "List all the boards in Jira",
+var boardsListCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List all the boards",
 	Run: func(cmd *cobra.Command, args []string) {
 		client := getClient()
 
@@ -32,7 +31,13 @@ var boardsCmd = &cobra.Command{
 	},
 }
 
+var boardsCmd = &cobra.Command{
+	Use:   "boards",
+	Short: "Board related commands",
+}
+
 func init() {
+	boardsCmd.AddCommand(boardsListCmd)
 	rootCmd.AddCommand(boardsCmd)
 }
 
