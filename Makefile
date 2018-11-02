@@ -32,6 +32,10 @@ install: ## Install the local dependencies
 vet: ## Vet the code
 	go vet -v ./...
 
+.PHONY: lint
+lint: ## Lint the code
+	golint -set_exit_status $(shell go list ./...)
+
 .PHONY: build
 build: ## Build the application
 	go build .

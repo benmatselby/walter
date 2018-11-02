@@ -5,28 +5,15 @@ import (
 	"os"
 	"sort"
 
-	"github.com/spf13/viper"
-
 	jira "github.com/andygrunwald/go-jira"
 	"github.com/spf13/cobra"
 )
 
-// boardsCmd represents the boards command
-var boardsCmd = &cobra.Command{
-	Use:   "boards",
-	Short: "List all the boards in Jira",
+var boardsListCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List all the boards",
 	Run: func(cmd *cobra.Command, args []string) {
-		base := viper.GetString("JIRA_URL")
-		tp := jira.BasicAuthTransport{
-			Username: viper.GetString("JIRA_USERNAME"),
-			Password: viper.GetString("JIRA_TOKEN"),
-		}
-
-		client, err := jira.NewClient(tp.Client(), base)
-		if err != nil {
-			fmt.Fprint(os.Stderr, err)
-			os.Exit(2)
-		}
+		client := getClient()
 
 		opts := jira.BoardListOptions{}
 		list, _, err := client.Board.GetAllBoards(&opts)
@@ -44,16 +31,29 @@ var boardsCmd = &cobra.Command{
 	},
 }
 
+var boardsCmd = &cobra.Command{
+	Use:   "boards",
+	Short: "Board related commands",
+}
+
 func init() {
+	boardsCmd.AddCommand(boardsListCmd)
 	rootCmd.AddCommand(boardsCmd)
+}
 
-	// Here you will define your flags and configuration settings.
+func getBoard(name string) (*jira.Board, error) {
+	client := getClient()
+	opts := jira.BoardListOptions{}
+	list, _, err := client.Board.GetAllBoards(&opts)
+	if err != nil {
+		return nil, err
+	}
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// boardsCmd.PersistentFlags().String("foo", "", "A help for foo")
+	for _, item := range list.Values {
+		if item.Name == name {
+			return &item, nil
+		}
+	}
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// boardsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	return nil, fmt.Errorf("unable to find board with name %s", name)
 }

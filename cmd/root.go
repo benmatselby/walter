@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	jira "github.com/andygrunwald/go-jira"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -65,4 +66,19 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
+}
+
+func getClient() *jira.Client {
+	base := viper.GetString("JIRA_URL")
+	tp := jira.BasicAuthTransport{
+		Username: viper.GetString("JIRA_USERNAME"),
+		Password: viper.GetString("JIRA_TOKEN"),
+	}
+
+	client, err := jira.NewClient(tp.Client(), base)
+	if err != nil {
+		fmt.Fprint(os.Stderr, err)
+		os.Exit(2)
+	}
+	return client
 }
