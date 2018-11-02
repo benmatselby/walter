@@ -50,7 +50,16 @@ var sprintListCmd = &cobra.Command{
 		}
 
 		for _, sprint := range sprints {
-			fmt.Println(fmt.Sprintf("* %s", sprint.Name))
+			start := "?"
+			end := "?"
+			if sprint.StartDate != nil {
+				start = sprint.StartDate.Format("02-01-2006")
+			}
+
+			if sprint.EndDate != nil {
+				end = sprint.EndDate.Format("02-01-2006")
+			}
+			fmt.Println(fmt.Sprintf("* Start: %s End: %s - %s", start, end, sprint.Name))
 		}
 	},
 }
