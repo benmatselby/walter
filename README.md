@@ -8,9 +8,22 @@ _That rug really tied the room together, did it not?_
 CLI application for getting information out of Jira. It's based on [Donny](https://github.com/benmatselby/donny) so the aims are the same:
 
 ```
-COMMANDS:
+CLI application for retrieving data from Jira
 
+Usage:
+  walter [command]
 
+Available Commands:
+  boards      Board related commands
+  help        Help about any command
+  sprint      Sprint related commands
+
+Flags:
+      --config string   config file (default is $HOME/.walter/config.yaml)
+  -h, --help            help for walter
+  -t, --toggle          Help message for toggle
+
+Use "walter [command] --help" for more information about a command.
 ```
 
 ## Requirements
@@ -25,9 +38,9 @@ If you are wanting to build and develop this, you will need the following items 
 You will need the following environment variables defining:
 
 ```bash
-$ export JIRA_TOKEN=""
-$ export JIRA_URL=""
-$ export JIRA_USERNAME=""
+export JIRA_TOKEN=""
+export JIRA_URL=""
+export JIRA_USERNAME=""
 ```
 
 ## Installation via Docker
@@ -47,8 +60,8 @@ $ docker run \
 ## Installation via Git
 
 ```bash
-$ git clone git@github.com:benmatselby/walter.git
-$ cd walter
-$ make all
-$ ./walter
+git clone git@github.com:benmatselby/walter.git
+cd walter
+make all
+./walter
 ```

@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// sprintIssuesCmd defines the cobra command to list all issues
 var sprintIssuesCmd = &cobra.Command{
 	Use:   "issues",
 	Short: "List all the issues for the sprint",
@@ -47,6 +48,7 @@ var sprintIssuesCmd = &cobra.Command{
 	},
 }
 
+// sprintListCmd defines the cobra command to list all the sprints
 var sprintListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all the sprints",
@@ -82,17 +84,21 @@ var sprintListCmd = &cobra.Command{
 	},
 }
 
+// sprintCmd defines the base "sprint" command that allows sub commands
+// to hang off
 var sprintCmd = &cobra.Command{
 	Use:   "sprint",
 	Short: "Sprint related commands",
 }
 
+// init registers all the commands ultimately to root
 func init() {
 	sprintCmd.AddCommand(sprintIssuesCmd)
 	sprintCmd.AddCommand(sprintListCmd)
 	rootCmd.AddCommand(sprintCmd)
 }
 
+// getIssues gets the issues given a board and sprint name
 func getIssues(boardName, sprintName string) ([]jira.Issue, error) {
 	client := getClient()
 

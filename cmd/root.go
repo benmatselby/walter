@@ -28,6 +28,7 @@ func Execute() {
 	}
 }
 
+// init initialises any configuration required
 func init() {
 	cobra.OnInitialize(initConfig)
 
@@ -68,6 +69,7 @@ func initConfig() {
 	}
 }
 
+// getClient provides a wrapper around getting a jira client
 func getClient() *jira.Client {
 	base := viper.GetString("JIRA_URL")
 	tp := jira.BasicAuthTransport{

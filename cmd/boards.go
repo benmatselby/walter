@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// boardsListCmd defines the cobra command to list all boards
 var boardsListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all the boards",
@@ -31,16 +32,20 @@ var boardsListCmd = &cobra.Command{
 	},
 }
 
+// boardsCmd defines the base "boards" command that allows sub commands
+// to hang off
 var boardsCmd = &cobra.Command{
 	Use:   "boards",
 	Short: "Board related commands",
 }
 
+// init registers all the commands ultimately to root
 func init() {
 	boardsCmd.AddCommand(boardsListCmd)
 	rootCmd.AddCommand(boardsCmd)
 }
 
+// getBoard returns the board information
 func getBoard(name string) (*jira.Board, error) {
 	client := getClient()
 	opts := jira.BoardListOptions{}
