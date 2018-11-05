@@ -68,11 +68,16 @@ func (c *Cli) DisplayIssues(boardName, sprintName string) string {
 	}
 
 	ui := ""
-	for k, v := range items {
-		ui += "\n" + k + "\n"
-		ui += strings.Repeat("=", len(k)) + "\n"
-		for _, item := range v {
-			ui += fmt.Sprintf("* %s\n", item.Fields.Summary)
+	layout, err := c.getBoardLayout(boardName)
+	if err != nil {
+		ui += err.Error()
+	}
+
+	for _, column := range layout {
+		ui += "\n" + column + "\n"
+		ui += strings.Repeat("=", len(column)) + "\n"
+		for _, v := range items[column] {
+			ui += fmt.Sprintf("* %s\n", v.Fields.Summary)
 		}
 	}
 	return ui
@@ -80,13 +85,6 @@ func (c *Cli) DisplayIssues(boardName, sprintName string) string {
 
 // DisplayBurndown will render a burndown table for the sprint
 func (c *Cli) DisplayBurndown(boardName, sprintName string) string {
-	layoutKey := fmt.Sprintf("boards.%s.layout", boardName)
-	ok := viper.IsSet(layoutKey)
-
-	if !ok {
-		return fmt.Sprintf("%s is not defined in the configuration file", layoutKey)
-	}
-
 	issues, err := c.getIssues(boardName, sprintName)
 	if err != nil {
 		return err.Error()
@@ -111,7 +109,11 @@ func (c *Cli) DisplayBurndown(boardName, sprintName string) string {
 		ui += fmt.Sprintf("There was no story point field (%s) defined in your configuration file, so cannot calculate points", storyFieldKey)
 	}
 
-	layout := viper.GetStringSlice(layoutKey)
+	layout, err := c.getBoardLayout(boardName)
+	if err != nil {
+		ui += err.Error()
+	}
+
 	w := tabwriter.NewWriter(os.Stdout, 0, 1, 1, ' ', 0)
 	fmt.Fprintf(w, "%s\t%s\t%s\n", "Column", "Items", "Points")
 	fmt.Fprintf(w, "%s\t%s\t%s\n", "------", "-----", "------")
@@ -137,15 +139,13 @@ func (c *Cli) DisplayBurndown(boardName, sprintName string) string {
 		totalItems += itemCount
 
 		fmt.Fprintf(w, "%s\t%d\t%d\n", column, itemCount, points)
-
 	}
 	fmt.Fprintf(w, "%s\t%s\t%s\n", "------", "", "")
 	fmt.Fprintf(w, "%s\t%d\t%d\n", "Total", totalItems, totalPoints)
 	fmt.Fprintf(w, "%s\t%s\t%s\n", "------", "", "")
 
-	w.Flush()
-
-	return ui
+	w.Flush() // These two lines need some attention
+	return ui // as we flush and return a string
 }
 
 // DisplaySprints will render a list of sprints
@@ -184,6 +184,18 @@ func (c *Cli) getBoards() ([]jira.Board, error) {
 	sort.Slice(boards, func(i, j int) bool { return boards[i].Name < boards[j].Name })
 
 	return boards, nil
+}
+
+// getBoardLayout will return what the columns are for a given board
+func (c *Cli) getBoardLayout(boardName string) ([]string, error) {
+	layoutKey := fmt.Sprintf("boards.%s.layout", boardName)
+	ok := viper.IsSet(layoutKey)
+
+	if !ok {
+		return nil, fmt.Errorf("%s is not defined in the configuration file", layoutKey)
+	}
+
+	return viper.GetStringSlice(layoutKey), nil
 }
 
 // getBoard returns the board information
