@@ -35,6 +35,8 @@ If you are wanting to build and develop this, you will need the following items 
 
 ## Configuration
 
+### Environment variables
+
 You will need the following environment variables defining:
 
 ```bash
@@ -42,6 +44,31 @@ export JIRA_TOKEN=""
 export JIRA_URL=""
 export JIRA_USERNAME=""
 ```
+
+Creating a Jira API Token is documented [here](https://confluence.atlassian.com/cloud/api-tokens-938839638.html)
+
+### Application configuration file
+
+Long term this may not be required, but right now we need a configuration file
+
+An example:
+
+```
+boards:
+  My special board:
+    story_point_field: customfield_888
+    layout:
+      - To Do
+      - In Progress
+      - Stuck
+      - Review
+      - Done
+```
+
+- **boards** - This is the top level node for board configuration
+- **My special board** - This is the name of the board (`walter boards list`)
+- **story_point_field** - This defins the custom field that is houses the story point estimation (If you do not define this, the sprint.burndown command does not fully render all the information)
+- **layout** - This is the names of the columns on the board (I am struggling to find an API endpoint that documents this)
 
 ## Installation via Docker
 
@@ -54,6 +81,7 @@ $ docker run \
     -eJIRA_TOKEN \
     -eJIRA_URL \
     -eJIRA_USERNAME \
+    -v "${HOME}/.walter":/root/.walter \
     benmatselby/walter "$@"
 ```
 
