@@ -22,6 +22,22 @@ var sprintIssuesCmd = &cobra.Command{
 	},
 }
 
+// sprintBurndownCmd defines the cobra command to display the burndown for a
+// given sprint
+var sprintBurndownCmd = &cobra.Command{
+	Use:   "burndown",
+	Short: "Display the burndown for the sprint",
+	Args:  cobra.MinimumNArgs(2),
+	Run: func(cmd *cobra.Command, args []string) {
+		boardName := args[0]
+		sprintName := args[1]
+
+		c := cli.NewCli()
+		burndown := c.DisplayBurndown(boardName, sprintName)
+		fmt.Print(burndown)
+	},
+}
+
 // sprintListCmd defines the cobra command to list all the sprints
 var sprintListCmd = &cobra.Command{
 	Use:   "list",
@@ -47,5 +63,6 @@ var sprintCmd = &cobra.Command{
 func init() {
 	sprintCmd.AddCommand(sprintIssuesCmd)
 	sprintCmd.AddCommand(sprintListCmd)
+	sprintCmd.AddCommand(sprintBurndownCmd)
 	rootCmd.AddCommand(sprintCmd)
 }
