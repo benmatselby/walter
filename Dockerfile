@@ -33,5 +33,7 @@ FROM scratch
 COPY --from=builder /usr/bin/${APPNAME} /usr/bin/${APPNAME}
 COPY --from=builder /etc/ssl/certs/ /etc/ssl/certs
 
+ENV HOME /root
+
 ENTRYPOINT [ "walter" ]
 CMD [ "--help"]
