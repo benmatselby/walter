@@ -166,7 +166,7 @@ func (c *Cli) DisplaySprints(boardName string) string {
 		if sprint.EndDate != nil {
 			end = sprint.EndDate.Format("02-01-2006")
 		}
-		ui += fmt.Sprintf("* Start: %s End: %s - %s", start, end, sprint.Name)
+		ui += fmt.Sprintf("* Start: %s End: %s - %s\n", start, end, sprint.Name)
 	}
 
 	return ui
