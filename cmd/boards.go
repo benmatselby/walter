@@ -7,27 +7,28 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// boardsListCmd defines the cobra command to list all boards
-var boardsListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List all the boards",
-	Run: func(cmd *cobra.Command, args []string) {
+// NewBoardListCommand creates a new `board list` command
+func NewBoardListCommand(cli *cli.Cli) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "list",
+		Short: "List all the boards",
+		Run: func(cmd *cobra.Command, args []string) {
+			boards := cli.DisplayBoards()
+			fmt.Println(boards)
+		},
+	}
 
-		c := cli.NewCli()
-		boards := c.DisplayBoards()
-		fmt.Print(boards)
-	},
+	return cmd
 }
 
-// boardsCmd defines the base "boards" command that allows sub commands
-// to hang off
-var boardsCmd = &cobra.Command{
-	Use:   "boards",
-	Short: "Board related commands",
-}
-
-// init registers all the commands ultimately to root
-func init() {
-	boardsCmd.AddCommand(boardsListCmd)
-	rootCmd.AddCommand(boardsCmd)
+// NewBoardCommand creates a new `board` command
+func NewBoardCommand(cli *cli.Cli) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "board",
+		Short: "Board related commands",
+	}
+	cmd.AddCommand(
+		NewBoardListCommand(cli),
+	)
+	return cmd
 }
