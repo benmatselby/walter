@@ -14,7 +14,7 @@ Usage:
   walter [command]
 
 Available Commands:
-  boards      Board related commands
+  board      Board related commands
   help        Help about any command
   sprint      Sprint related commands
 
@@ -49,7 +49,7 @@ Creating a Jira API Token is documented [here](https://confluence.atlassian.com/
 
 ### Application configuration file
 
-Long term this may not be required, but right now we need a configuration file
+Long term this may not be required, but right now we need a configuration file (by default, `~/.walter/config.yaml`)
 
 An example:
 
@@ -66,7 +66,7 @@ boards:
 ```
 
 - **boards** - This is the top level node for board configuration
-- **My special board** - This is the name of the board (`walter boards list`)
+- **My special board** - This is the name of the board (`walter board list`)
 - **story_point_field** - This defins the custom field that is houses the story point estimation (If you do not define this, the sprint.burndown command does not fully render all the information)
 - **layout** - This is the names of the columns on the board (I am struggling to find an API endpoint that documents this)
 
