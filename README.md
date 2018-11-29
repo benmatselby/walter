@@ -14,7 +14,7 @@ Usage:
   walter [command]
 
 Available Commands:
-  board      Board related commands
+  board       Board related commands
   help        Help about any command
   sprint      Sprint related commands
 
