@@ -6,6 +6,8 @@ import (
 	"strings"
 
 	"github.com/benmatselby/walter/cli"
+	"github.com/benmatselby/walter/cmd/board"
+	"github.com/benmatselby/walter/cmd/sprint"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -44,8 +46,8 @@ func NewRootCommand(cli *cli.Cli) *cobra.Command {
 	cmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.walter/config.yaml)")
 
 	cmd.AddCommand(
-		NewBoardCommand(cli),
-		NewSprintCommand(cli),
+		board.NewBoardCommand(cli),
+		sprint.NewSprintCommand(cli),
 	)
 
 	return cmd
@@ -73,7 +75,7 @@ func initConfig() {
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	if err := viper.ReadInConfig(); err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to load config: %s\n", err)
 	}
 }

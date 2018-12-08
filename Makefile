@@ -34,7 +34,7 @@ vet: ## Vet the code
 
 .PHONY: lint
 lint: ## Lint the code
-	golint -set_exit_status $(shell go list ./...)
+	golint -set_exit_status $(shell go list ./... | grep -v vendor)
 
 .PHONY: build
 build: ## Build the application
