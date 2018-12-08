@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/benmatselby/walter/cli"
+	"github.com/benmatselby/walter/cmd/sprint"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -45,7 +46,7 @@ func NewRootCommand(cli *cli.Cli) *cobra.Command {
 
 	cmd.AddCommand(
 		NewBoardCommand(cli),
-		NewSprintCommand(cli),
+		sprint.NewSprintCommand(cli),
 	)
 
 	return cmd
