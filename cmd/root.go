@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/benmatselby/walter/cli"
+	"github.com/benmatselby/walter/cmd/board"
 	"github.com/benmatselby/walter/cmd/sprint"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -45,7 +46,7 @@ func NewRootCommand(cli *cli.Cli) *cobra.Command {
 	cmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.walter/config.yaml)")
 
 	cmd.AddCommand(
-		NewBoardCommand(cli),
+		board.NewBoardCommand(cli),
 		sprint.NewSprintCommand(cli),
 	)
 

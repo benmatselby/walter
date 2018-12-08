@@ -1,4 +1,4 @@
-package cmd
+package board
 
 import (
 	"fmt"
@@ -18,17 +18,5 @@ func NewBoardListCommand(cli *cli.Cli) *cobra.Command {
 		},
 	}
 
-	return cmd
-}
-
-// NewBoardCommand creates a new `board` command
-func NewBoardCommand(cli *cli.Cli) *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "board",
-		Short: "Board related commands",
-	}
-	cmd.AddCommand(
-		NewBoardListCommand(cli),
-	)
 	return cmd
 }
