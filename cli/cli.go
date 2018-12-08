@@ -34,21 +34,6 @@ func NewCli() *Cli {
 	return c
 }
 
-// DisplayBoards will render a list of boards
-func (c *Cli) DisplayBoards() string {
-	boards, err := c.getBoards()
-	if err != nil {
-		return err.Error()
-	}
-
-	ui := ""
-	for _, item := range boards {
-		ui += fmt.Sprintf("%s\n", item.Name)
-	}
-
-	return ui
-}
-
 // DisplayIssues will render a list of issues on the board
 func (c *Cli) DisplayIssues(boardName, sprintName string) string {
 	issues, err := c.getIssues(boardName, sprintName)
