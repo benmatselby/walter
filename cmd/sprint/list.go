@@ -2,24 +2,42 @@ package sprint
 
 import (
 	"fmt"
+	"io"
+	"os"
 
-	"github.com/benmatselby/walter/cli"
+	"github.com/benmatselby/walter/jira"
 	"github.com/spf13/cobra"
 )
 
-// NewSprintListCommand creates a new `sprint list` command
-func NewSprintListCommand(cli *cli.Cli) *cobra.Command {
+// NewListCommand creates a new `sprint list` command
+func NewListCommand(client jira.API) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "list",
 		Short:   "List all the sprints",
 		Example: "walter sprint list \"my board\"",
 		Args:    cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			boardName := args[0]
-			sprints := cli.DisplaySprints(boardName)
-			fmt.Print(sprints)
+			err := ListSprints(client, args[0], os.Stdout)
+			if err != nil {
+				fmt.Print(err)
+				os.Exit(1)
+			}
 		},
 	}
 
 	return cmd
+}
+
+// ListSprints will list all the sprints for a given board
+func ListSprints(client jira.API, boardName string, w io.Writer) error {
+	sprints, err := client.GetSprints(boardName)
+	if err != nil {
+		return err
+	}
+
+	for _, sprint := range sprints {
+		fmt.Fprintf(w, "%s\n", sprint.Name)
+	}
+
+	return nil
 }
