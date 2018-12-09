@@ -2,7 +2,7 @@ language: go
 go:
   - 1.x
 notifications:
-  email: true
+  email: always
 env:
   - DEP_VERSION="0.5.0"
 before_install:
@@ -12,3 +12,5 @@ before_install:
   - chmod +x $GOPATH/bin/dep
 script:
   - make all
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
