@@ -108,3 +108,18 @@ func (mr *MockAPIMockRecorder) GetIssues(boardName, sprintName interface{}) *gom
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetIssues", reflect.TypeOf((*MockAPI)(nil).GetIssues), boardName, sprintName)
 }
+
+// GetIssueCustomFields mocks base method
+func (m *MockAPI) GetIssueCustomFields(issueID string) (go_jira.CustomFields, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetIssueCustomFields", issueID)
+	ret0, _ := ret[0].(go_jira.CustomFields)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetIssueCustomFields indicates an expected call of GetIssueCustomFields
+func (mr *MockAPIMockRecorder) GetIssueCustomFields(issueID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetIssueCustomFields", reflect.TypeOf((*MockAPI)(nil).GetIssueCustomFields), issueID)
+}

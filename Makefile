@@ -47,6 +47,7 @@ static: ## Build the application
 .PHONY: test
 test: ## Run the unit tests
 	go test ./... -coverprofile=profile.out
+	go tool cover -func=profile.out
 
 .PHONY: test-cov
 test-cov: test ## Run the unit tests with coverage

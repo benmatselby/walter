@@ -5,7 +5,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/benmatselby/walter/cli"
 	"github.com/benmatselby/walter/cmd/board"
 	"github.com/benmatselby/walter/cmd/sprint"
 	"github.com/benmatselby/walter/jira"
@@ -23,11 +22,11 @@ func Execute() {
 	// as that needs the viper configration up and running
 	initConfig()
 
-	// Build a new Cli
-	cli := cli.NewCli()
+	// Build a new client
+	client := jira.NewClient()
 
 	// Build the root command
-	cmd := NewRootCommand(cli)
+	cmd := NewRootCommand(&client)
 
 	// Execute the application
 	if err := cmd.Execute(); err != nil {
@@ -38,7 +37,7 @@ func Execute() {
 
 // NewRootCommand builds the main cli application and
 // adds all the child commands
-func NewRootCommand(cli *cli.Cli) *cobra.Command {
+func NewRootCommand(client jira.API) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "walter",
 		Short: "CLI application for retrieving data from Jira",
@@ -46,13 +45,9 @@ func NewRootCommand(cli *cli.Cli) *cobra.Command {
 
 	cmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.walter/config.yaml)")
 
-	// Temporary - This will be a param when all converted over
-	client := jira.NewClient()
-	// Temporary
-
 	cmd.AddCommand(
-		board.NewBoardCommand(&client),
-		sprint.NewSprintCommand(cli),
+		board.NewBoardCommand(client),
+		sprint.NewSprintCommand(client),
 	)
 
 	return cmd

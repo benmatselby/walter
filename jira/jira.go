@@ -16,9 +16,10 @@ type API interface {
 	GetBoardLayout(name string) ([]string, error)
 	GetSprints(boardName string) ([]jira.Sprint, error)
 	GetIssues(boardName, sprintName string) ([]jira.Issue, error)
+	GetIssueCustomFields(issueID string) (jira.CustomFields, error)
 }
 
-// Client is the concrete implemntation of the API interface
+// Client is the concrete implementation of the API interface
 type Client struct {
 	jira *jira.Client
 }
@@ -123,4 +124,10 @@ func (c *Client) GetIssues(boardName, sprintName string) ([]jira.Issue, error) {
 	}
 
 	return issues, nil
+}
+
+// GetIssueCustomFields returns all custom field data for a given Issue
+func (c *Client) GetIssueCustomFields(issueID string) (jira.CustomFields, error) {
+	fields, _, err := c.jira.Issue.GetCustomFields(issueID)
+	return fields, err
 }
