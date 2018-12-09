@@ -8,6 +8,7 @@ import (
 	"github.com/benmatselby/walter/cli"
 	"github.com/benmatselby/walter/cmd/board"
 	"github.com/benmatselby/walter/cmd/sprint"
+	"github.com/benmatselby/walter/jira"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -45,8 +46,12 @@ func NewRootCommand(cli *cli.Cli) *cobra.Command {
 
 	cmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.walter/config.yaml)")
 
+	// Temporary - This will be a param when all converted over
+	client := jira.NewClient()
+	// Temporary
+
 	cmd.AddCommand(
-		board.NewBoardCommand(cli),
+		board.NewBoardCommand(&client),
 		sprint.NewSprintCommand(cli),
 	)
 
