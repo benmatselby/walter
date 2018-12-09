@@ -12,7 +12,10 @@ import (
 // API defines the interface
 type API interface {
 	GetBoards() ([]jira.Board, error)
+	GetBoard(name string) (*jira.Board, error)
+	GetBoardLayout(name string) ([]string, error)
 	GetSprints(boardName string) ([]jira.Sprint, error)
+	GetIssues(boardName, sprintName string) ([]jira.Issue, error)
 }
 
 // Client is the concrete implemntation of the API interface
@@ -67,6 +70,18 @@ func (c *Client) GetBoard(name string) (*jira.Board, error) {
 	return nil, fmt.Errorf("unable to find board with name %s", name)
 }
 
+// GetBoardLayout will return what the columns are for a given board
+func (c *Client) GetBoardLayout(name string) ([]string, error) {
+	layoutKey := fmt.Sprintf("boards.%s.layout", name)
+	ok := viper.IsSet(layoutKey)
+
+	if !ok {
+		return nil, fmt.Errorf("%s is not defined in the configuration file", layoutKey)
+	}
+
+	return viper.GetStringSlice(layoutKey), nil
+}
+
 // GetSprints will return a list of sprints
 func (c *Client) GetSprints(boardName string) ([]jira.Sprint, error) {
 	board, err := c.GetBoard(boardName)
@@ -80,4 +95,32 @@ func (c *Client) GetSprints(boardName string) ([]jira.Sprint, error) {
 	}
 
 	return sprints, nil
+}
+
+// GetIssues will return a list of issues for a given board and sprint
+func (c *Client) GetIssues(boardName, sprintName string) ([]jira.Issue, error) {
+	board, err := c.GetBoard(boardName)
+	if err != nil {
+		return nil, err
+	}
+
+	sprints, _, err := c.jira.Board.GetAllSprints(strconv.Itoa(board.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	sprintID := -1
+	for _, sprint := range sprints {
+		if sprint.Name == sprintName {
+			sprintID = sprint.ID
+			break
+		}
+	}
+
+	issues, _, err := c.jira.Sprint.GetIssuesForSprint(sprintID)
+	if err != nil {
+		return nil, err
+	}
+
+	return issues, nil
 }

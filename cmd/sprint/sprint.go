@@ -20,7 +20,7 @@ func NewSprintCommand(cli *cli.Cli) *cobra.Command {
 	cmd.AddCommand(
 		NewListCommand(&client),
 		NewSprintBurndownCommand(cli),
-		NewSprintIssueCommand(cli),
+		NewIssueCommand(&client),
 	)
 
 	return cmd

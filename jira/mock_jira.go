@@ -49,6 +49,36 @@ func (mr *MockAPIMockRecorder) GetBoards() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBoards", reflect.TypeOf((*MockAPI)(nil).GetBoards))
 }
 
+// GetBoard mocks base method
+func (m *MockAPI) GetBoard(name string) (*go_jira.Board, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBoard", name)
+	ret0, _ := ret[0].(*go_jira.Board)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBoard indicates an expected call of GetBoard
+func (mr *MockAPIMockRecorder) GetBoard(name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBoard", reflect.TypeOf((*MockAPI)(nil).GetBoard), name)
+}
+
+// GetBoardLayout mocks base method
+func (m *MockAPI) GetBoardLayout(name string) ([]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBoardLayout", name)
+	ret0, _ := ret[0].([]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBoardLayout indicates an expected call of GetBoardLayout
+func (mr *MockAPIMockRecorder) GetBoardLayout(name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBoardLayout", reflect.TypeOf((*MockAPI)(nil).GetBoardLayout), name)
+}
+
 // GetSprints mocks base method
 func (m *MockAPI) GetSprints(boardName string) ([]go_jira.Sprint, error) {
 	m.ctrl.T.Helper()
@@ -62,4 +92,19 @@ func (m *MockAPI) GetSprints(boardName string) ([]go_jira.Sprint, error) {
 func (mr *MockAPIMockRecorder) GetSprints(boardName interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSprints", reflect.TypeOf((*MockAPI)(nil).GetSprints), boardName)
+}
+
+// GetIssues mocks base method
+func (m *MockAPI) GetIssues(boardName, sprintName string) ([]go_jira.Issue, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetIssues", boardName, sprintName)
+	ret0, _ := ret[0].([]go_jira.Issue)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetIssues indicates an expected call of GetIssues
+func (mr *MockAPIMockRecorder) GetIssues(boardName, sprintName interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetIssues", reflect.TypeOf((*MockAPI)(nil).GetIssues), boardName, sprintName)
 }

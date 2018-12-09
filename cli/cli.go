@@ -5,7 +5,6 @@ import (
 	"os"
 	"sort"
 	"strconv"
-	"strings"
 	"text/tabwriter"
 
 	"github.com/andygrunwald/go-jira"
@@ -32,40 +31,6 @@ func NewCli() *Cli {
 	}
 
 	return c
-}
-
-// DisplayIssues will render a list of issues on the board
-func (c *Cli) DisplayIssues(boardName, sprintName string) string {
-	issues, err := c.getIssues(boardName, sprintName)
-	if err != nil {
-		return err.Error()
-	}
-
-	items := make(map[string][]jira.Issue)
-
-	// Now build a map|slice|array (!) of
-	// BoardColumn => Items[]
-	for index := 0; index < len(issues); index++ {
-		item := issues[index]
-
-		key := item.Fields.Status.Name
-		items[key] = append(items[key], item)
-	}
-
-	ui := ""
-	layout, err := c.getBoardLayout(boardName)
-	if err != nil {
-		ui += err.Error()
-	}
-
-	for _, column := range layout {
-		ui += "\n" + column + "\n"
-		ui += strings.Repeat("=", len(column)) + "\n"
-		for _, v := range items[column] {
-			ui += fmt.Sprintf("* %s\n", v.Fields.Summary)
-		}
-	}
-	return ui
 }
 
 // DisplayBurndown will render a burndown table for the sprint
