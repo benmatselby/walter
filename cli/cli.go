@@ -133,30 +133,6 @@ func (c *Cli) DisplayBurndown(boardName, sprintName string) string {
 	return ui // as we flush and return a string
 }
 
-// DisplaySprints will render a list of sprints
-func (c *Cli) DisplaySprints(boardName string) string {
-	sprints, err := c.getSprints(boardName)
-	if err != nil {
-		return err.Error()
-	}
-
-	ui := ""
-	for _, sprint := range sprints {
-		start := "?"
-		end := "?"
-		if sprint.StartDate != nil {
-			start = sprint.StartDate.Format("02-01-2006")
-		}
-
-		if sprint.EndDate != nil {
-			end = sprint.EndDate.Format("02-01-2006")
-		}
-		ui += fmt.Sprintf("* Start: %s End: %s - %s\n", start, end, sprint.Name)
-	}
-
-	return ui
-}
-
 // getBoards returns all boards
 func (c *Cli) getBoards() ([]jira.Board, error) {
 	opts := jira.BoardListOptions{}
@@ -198,21 +174,6 @@ func (c *Cli) getBoard(name string) (*jira.Board, error) {
 	}
 
 	return nil, fmt.Errorf("unable to find board with name %s", name)
-}
-
-// getSprints returns all sprints
-func (c *Cli) getSprints(boardName string) ([]jira.Sprint, error) {
-	board, err := c.getBoard(boardName)
-	if err != nil {
-		return nil, err
-	}
-
-	sprints, _, err := c.jira.Board.GetAllSprints(strconv.Itoa(board.ID))
-	if err != nil {
-		return nil, err
-	}
-
-	return sprints, nil
 }
 
 // getIssues returns all issues

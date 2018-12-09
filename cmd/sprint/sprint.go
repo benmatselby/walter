@@ -2,6 +2,7 @@ package sprint
 
 import (
 	"github.com/benmatselby/walter/cli"
+	"github.com/benmatselby/walter/jira"
 	"github.com/spf13/cobra"
 )
 
@@ -12,8 +13,12 @@ func NewSprintCommand(cli *cli.Cli) *cobra.Command {
 		Short: "Sprint related commands",
 	}
 
+	// Temporary - This will be a param when all converted over
+	client := jira.NewClient()
+	// Temporary
+
 	cmd.AddCommand(
-		NewSprintListCommand(cli),
+		NewListCommand(&client),
 		NewSprintBurndownCommand(cli),
 		NewSprintIssueCommand(cli),
 	)

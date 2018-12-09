@@ -1,7 +1,9 @@
 package jira
 
 import (
+	"fmt"
 	"sort"
+	"strconv"
 
 	jira "github.com/andygrunwald/go-jira"
 	"github.com/spf13/viper"
@@ -10,6 +12,7 @@ import (
 // API defines the interface
 type API interface {
 	GetBoards() ([]jira.Board, error)
+	GetSprints(boardName string) ([]jira.Sprint, error)
 }
 
 // Client is the concrete implemntation of the API interface
@@ -46,4 +49,35 @@ func (c *Client) GetBoards() ([]jira.Board, error) {
 	sort.Slice(boards, func(i, j int) bool { return boards[i].Name < boards[j].Name })
 
 	return boards, nil
+}
+
+// GetBoard will return a single board given a name
+func (c *Client) GetBoard(name string) (*jira.Board, error) {
+	list, err := c.GetBoards()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, item := range list {
+		if item.Name == name {
+			return &item, nil
+		}
+	}
+
+	return nil, fmt.Errorf("unable to find board with name %s", name)
+}
+
+// GetSprints will return a list of sprints
+func (c *Client) GetSprints(boardName string) ([]jira.Sprint, error) {
+	board, err := c.GetBoard(boardName)
+	if err != nil {
+		return nil, err
+	}
+
+	sprints, _, err := c.jira.Board.GetAllSprints(strconv.Itoa(board.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	return sprints, nil
 }
