@@ -16,6 +16,7 @@ type API interface {
 	GetBoardLayout(name string) ([]string, error)
 	GetSprints(boardName string) ([]jira.Sprint, error)
 	GetIssues(boardName, sprintName string) ([]jira.Issue, error)
+	GetIssuesForBoard(boardName string) ([]jira.Issue, error)
 	GetIssueCustomFields(issueID string) (jira.CustomFields, error)
 }
 
@@ -124,6 +125,36 @@ func (c *Client) GetIssues(boardName, sprintName string) ([]jira.Issue, error) {
 	}
 
 	return issues, nil
+}
+
+// searchResult is pulled from the jira library
+// It's not a public struct, but needed the struct for the Do function in GetIssuesForBoard
+type searchResult struct {
+	Issues     []jira.Issue `json:"issues" structs:"issues"`
+	StartAt    int          `json:"startAt" structs:"startAt"`
+	MaxResults int          `json:"maxResults" structs:"maxResults"`
+	Total      int          `json:"total" structs:"total"`
+}
+
+// GetIssuesForBoard will return a list of issues for a given board
+func (c *Client) GetIssuesForBoard(boardName string) ([]jira.Issue, error) {
+	board, err := c.GetBoard(boardName)
+	if err != nil {
+		return nil, err
+	}
+
+	// I cannot find a method in the go-jira package to do this, but I also struggled
+	// to find the API in the Jira documentation. Found this in
+	// https://community.atlassian.com/t5/Answers-Developer-Questions/Retrieve-all-issues-from-a-kanban-board-using-JIRA-rest-api/qaq-p/538719
+	req, _ := c.jira.NewRequest("GET", fmt.Sprintf("rest/agile/latest/board/%v/issue", board.ID), nil)
+
+	result := new(searchResult)
+	_, err = c.jira.Do(req, result)
+	if err != nil {
+		return nil, err
+	}
+
+	return result.Issues, nil
 }
 
 // GetIssueCustomFields returns all custom field data for a given Issue
