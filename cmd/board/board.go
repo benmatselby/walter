@@ -14,6 +14,7 @@ func NewBoardCommand(client jira.API) *cobra.Command {
 
 	cmd.AddCommand(
 		NewListCommand(client),
+		NewIssueCommand(client),
 	)
 	return cmd
 }
