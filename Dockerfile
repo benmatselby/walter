@@ -4,7 +4,7 @@ LABEL maintainer="Ben Selby <benmatselby@gmail.com>"
 ENV APPNAME walter
 ENV PATH /go/bin:/usr/local/go/bin:$PATH
 ENV GOPATH /go
-ENV DEP_VERSION 0.5.0
+ENV GO111MODULE on
 
 COPY . /go/src/github.com/benmatselby/${APPNAME}
 
@@ -18,11 +18,8 @@ RUN apk update && \
 		curl \
 		make
 
-RUN curl -fsSL -o /usr/local/bin/dep \
-	https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 && \
-	chmod +x /usr/local/bin/dep
-
 RUN cd /go/src/github.com/benmatselby/${APPNAME} && \
+	go get -u golang.org/x/lint/golint && \
 	make static-all  && \
 	mv ${APPNAME} /usr/bin/${APPNAME}  && \
 	apk del .build-deps  && \
