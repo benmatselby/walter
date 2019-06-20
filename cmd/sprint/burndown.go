@@ -13,14 +13,23 @@ import (
 	"github.com/spf13/viper"
 )
 
+// BurndownOptions defines what arguments/options the user can provide
+type BurndownOptions struct {
+	Args       []string
+	FilterType string
+}
+
 // NewBurndownCommand creates a new `sprint burndown` command
 func NewBurndownCommand(client jira.API) *cobra.Command {
+	var opts BurndownOptions
+
 	cmd := &cobra.Command{
 		Use:   "burndown",
 		Short: "Display the burndown for the sprint",
 		Args:  cobra.MinimumNArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
-			err := ShowBurndown(client, args[0], args[1], os.Stdout)
+			opts.Args = args
+			err := ShowBurndown(client, opts, os.Stdout)
 			if err != nil {
 				fmt.Print(err)
 				os.Exit(1)
@@ -28,11 +37,17 @@ func NewBurndownCommand(client jira.API) *cobra.Command {
 		},
 	}
 
+	flags := cmd.Flags()
+	flags.StringVar(&opts.FilterType, "filter-type", "", "Filter the output based on item type: Story, Sub-task")
+
 	return cmd
 }
 
 // ShowBurndown will provide burndown data in a tabular format
-func ShowBurndown(client jira.API, boardName, sprintName string, w io.Writer) error {
+func ShowBurndown(client jira.API, opts BurndownOptions, w io.Writer) error {
+	boardName := opts.Args[0]
+	sprintName := opts.Args[1]
+
 	issues, err := client.GetIssues(boardName, sprintName)
 	if err != nil {
 		return err
@@ -44,6 +59,11 @@ func ShowBurndown(client jira.API, boardName, sprintName string, w io.Writer) er
 	// BoardColumn => Isues[]
 	for index := 0; index < len(issues); index++ {
 		item := issues[index]
+
+		if opts.FilterType != "" && opts.FilterType != item.Fields.Type.Name {
+			continue
+		}
+
 		key := item.Fields.Status.Name
 		items[key] = append(items[key], item)
 	}
@@ -88,9 +108,9 @@ func ShowBurndown(client jira.API, boardName, sprintName string, w io.Writer) er
 
 		fmt.Fprintf(tw, "%s\t%d\t%d\n", column, itemCount, points)
 	}
-	fmt.Fprintf(tw, "%s\t%s\t%s\n", "------", "", "")
+	fmt.Fprintf(tw, "%s\t%s\t%s\n", "------", "-----", "------")
 	fmt.Fprintf(tw, "%s\t%d\t%d\n", "Total", totalItems, totalPoints)
-	fmt.Fprintf(tw, "%s\t%s\t%s\n", "------", "", "")
+	fmt.Fprintf(tw, "%s\t%s\t%s\n", "------", "-----", "------")
 
 	tw.Flush()
 
