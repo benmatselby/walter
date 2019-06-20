@@ -75,7 +75,7 @@ func ListIssues(client jira.API, opts IssueOptions, w io.Writer) error {
 		fmt.Fprintf(w, "\n%s\n", column)
 		fmt.Fprintf(w, strings.Repeat("=", len(column))+"\n")
 		for _, v := range items[column] {
-			fmt.Fprintf(w, "* %s\n", v.Fields.Summary)
+			fmt.Fprintf(w, "* %s - %s\n", v.Key, v.Fields.Summary)
 		}
 	}
 	return nil
