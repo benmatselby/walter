@@ -79,11 +79,15 @@ func TestNewIssuesCommandReturnsOutput(t *testing.T) {
 				Args: []string{"board", "sprint"},
 			}
 
-			sprint.ListIssues(client, opts, writer)
+			err := sprint.ListIssues(client, opts, writer)
 			writer.Flush()
 
 			if b.String() != tc.output {
 				t.Fatalf("expected '%s'; got '%s'", tc.output, b.String())
+			}
+
+			if err != nil && err != tc.err {
+				t.Fatalf("expected err '%s'; got '%s'", tc.err, err)
 			}
 		})
 	}
