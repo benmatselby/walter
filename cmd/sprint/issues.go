@@ -15,6 +15,7 @@ import (
 type IssueOptions struct {
 	Args       []string
 	FilterType string
+	MaxResults int
 }
 
 // NewIssueCommand creates a new `sprint issues` command
@@ -23,7 +24,7 @@ func NewIssueCommand(client jira.API) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "issues",
-		Short: "List all the issues for the sprint",
+		Short: "List all the issues for a given project sprint",
 		Args:  cobra.MinimumNArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
 			opts.Args = args
@@ -38,6 +39,7 @@ func NewIssueCommand(client jira.API) *cobra.Command {
 
 	flags := cmd.Flags()
 	flags.StringVar(&opts.FilterType, "filter-type", "", "Filter the output based on item type: Story, Sub-task")
+	flags.IntVar(&opts.MaxResults, "max-results", 100, "The amount of records to display")
 
 	return cmd
 }
@@ -46,7 +48,18 @@ func NewIssueCommand(client jira.API) *cobra.Command {
 func ListIssues(client jira.API, opts IssueOptions, w io.Writer) error {
 	boardName := opts.Args[0]
 	sprintName := opts.Args[1]
-	issues, err := client.GetIssues(boardName, sprintName)
+
+	query := fmt.Sprintf("sprint = '%s'", sprintName)
+
+	if opts.FilterType != "" {
+		query += fmt.Sprintf(" and type = '%s'", opts.FilterType)
+	}
+
+	searchOpts := goJira.SearchOptions{
+		MaxResults: opts.MaxResults,
+	}
+	issues, err := client.IssueSearch(query, &searchOpts)
+
 	if err != nil {
 		return err
 	}
@@ -57,11 +70,6 @@ func ListIssues(client jira.API, opts IssueOptions, w io.Writer) error {
 	// BoardColumn => Items[]
 	for index := 0; index < len(issues); index++ {
 		item := issues[index]
-
-		if opts.FilterType != "" && opts.FilterType != item.Fields.Type.Name {
-			continue
-		}
-
 		key := item.Fields.Status.Name
 		items[key] = append(items[key], item)
 	}

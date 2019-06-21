@@ -57,6 +57,9 @@ An example:
 boards:
   My special board:
     story_point_field: customfield_888
+    story_point_fields:
+      - customfield_888
+      - customfield_889
     layout:
       - To Do
       - In Progress
@@ -67,7 +70,8 @@ boards:
 
 - **boards** - This is the top level node for board configuration
 - **My special board** - This is the name of the board (`walter board list`)
-- **story_point_field** - This defins the custom field that is houses the story point estimation (If you do not define this, the sprint.burndown command does not fully render all the information)
+- **story_point_field** - This defines the custom field that is houses the story point estimation (If you do not define this, the sprint.burndown command does not fully render all the information)
+- **story_point_fields** - This defines the custom fields that should be used in conjunction for the story point estimation. It turns out that some projects have multiple fields defined over time! _I highly recommend against this_.
 - **layout** - This is the names of the columns on the board (I am struggling to find an API endpoint that documents this)
 
 ## Installation via Docker
