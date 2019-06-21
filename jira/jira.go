@@ -18,6 +18,7 @@ type API interface {
 	GetIssues(boardName, sprintName string) ([]jira.Issue, error)
 	GetIssuesForBoard(boardName string) ([]jira.Issue, error)
 	GetIssueCustomFields(issueID string) (jira.CustomFields, error)
+	IssueSearch(query string, opts *jira.SearchOptions) ([]jira.Issue, error)
 }
 
 // Client is the concrete implementation of the API interface
@@ -40,6 +41,12 @@ func NewClient() Client {
 	}
 
 	return client
+}
+
+// IssueSearch will search search for issues, given a query
+func (c *Client) IssueSearch(query string, opts *jira.SearchOptions) ([]jira.Issue, error) {
+	issues, _, err := c.jira.Issue.Search(query, opts)
+	return issues, err
 }
 
 // GetBoards will return the boards you can access

@@ -20,7 +20,7 @@ func TestNewIssuesCommand(t *testing.T) {
 	cmd := sprint.NewIssueCommand(client)
 
 	use := "issues"
-	short := "List all the issues for the sprint"
+	short := "List all the issues for a given project sprint"
 
 	if cmd.Use != use {
 		t.Fatalf("expected use: %s; got %s", use, cmd.Use)
@@ -62,7 +62,7 @@ func TestNewIssuesCommandReturnsOutput(t *testing.T) {
 
 			client.
 				EXPECT().
-				GetIssues(gomock.Eq("board"), gomock.Eq("sprint")).
+				IssueSearch(gomock.Eq("sprint = 'sprint' and type = 'Story'"), gomock.Eq(&goJira.SearchOptions{MaxResults: 7})).
 				Return(issues, tc.err).
 				AnyTimes()
 
@@ -76,7 +76,9 @@ func TestNewIssuesCommandReturnsOutput(t *testing.T) {
 			writer := bufio.NewWriter(&b)
 
 			opts := sprint.IssueOptions{
-				Args: []string{"board", "sprint"},
+				Args:       []string{"board", "sprint"},
+				MaxResults: 7,
+				FilterType: "Story",
 			}
 
 			err := sprint.ListIssues(client, opts, writer)
