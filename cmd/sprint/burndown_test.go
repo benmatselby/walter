@@ -34,11 +34,28 @@ func TestNewBurndownCommand(t *testing.T) {
 
 func TestShowBurndown(t *testing.T) {
 	tt := []struct {
-		name   string
-		output string
-		err    error
+		name            string
+		customFieldKey  string
+		customFieldKeys []string
+		storyPointField string
+		output          string
+		err             error
 	}{
-		{name: "can return a list of issues", output: `Column Items Points
+		{name: "can return a list of issues", customFieldKey: "field_1", customFieldKeys: []string{"field_2", "field_3"}, storyPointField: "field_1", output: `Column Items Points
+------ ----- ------
+Todo   1     1
+------ ----- ------
+Total  1     1
+------ ----- ------
+`, err: nil},
+		{name: "can use a secondary story point field", customFieldKey: "field_1", customFieldKeys: []string{"field_2", "field_3"}, storyPointField: "field_2", output: `Column Items Points
+------ ----- ------
+Todo   1     1
+------ ----- ------
+Total  1     1
+------ ----- ------
+`, err: nil},
+		{name: "can use a third story point field", customFieldKey: "field_1", customFieldKeys: []string{"field_2", "field_3"}, storyPointField: "field_3", output: `Column Items Points
 ------ ----- ------
 Todo   1     1
 ------ ----- ------
@@ -54,11 +71,16 @@ Total  1     1
 			defer ctrl.Finish()
 			client := jira.NewMockAPI(ctrl)
 
-			viper.Set("boards.board.story_point_field", "custom_field_xyz")
+			viper.Set("boards.board.story_point_field", tc.customFieldKey)
+			viper.Set("boards.board.story_point_fields", tc.customFieldKeys)
+
+			unknowns := make(map[string]interface{})
+			unknowns[tc.storyPointField] = float64(1)
 
 			fields := goJira.IssueFields{
-				Summary: "Issue 1",
-				Status:  &goJira.Status{Name: "Todo"},
+				Summary:  "Issue 1",
+				Status:   &goJira.Status{Name: "Todo"},
+				Unknowns: unknowns,
 			}
 
 			jiraIssues := goJira.Issue{
@@ -69,12 +91,9 @@ Total  1     1
 			issues := make([]goJira.Issue, 0)
 			issues = append(issues, jiraIssues)
 
-			customFields := make(map[string]string)
-			customFields["custom_field_xyz"] = "1"
-
 			client.
 				EXPECT().
-				GetIssues(gomock.Eq("board"), gomock.Eq("sprint")).
+				IssueSearch(gomock.Eq("sprint = 'sprint' and type = 'Story'"), gomock.Eq(&goJira.SearchOptions{MaxResults: 7})).
 				Return(issues, tc.err).
 				AnyTimes()
 
@@ -84,17 +103,13 @@ Total  1     1
 				Return([]string{"Todo"}, tc.err).
 				AnyTimes()
 
-			client.
-				EXPECT().
-				GetIssueCustomFields(gomock.Any()).
-				Return(customFields, nil).
-				AnyTimes()
-
 			var b bytes.Buffer
 			writer := bufio.NewWriter(&b)
 
 			opts := sprint.BurndownOptions{
-				Args: []string{"board", "sprint"},
+				Args:       []string{"board", "sprint"},
+				FilterType: "Story",
+				MaxResults: 7,
 			}
 
 			err := sprint.ShowBurndown(client, opts, writer)

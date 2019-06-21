@@ -17,7 +17,6 @@ type API interface {
 	GetSprints(boardName string) ([]jira.Sprint, error)
 	GetIssues(boardName, sprintName string) ([]jira.Issue, error)
 	GetIssuesForBoard(boardName string) ([]jira.Issue, error)
-	GetIssueCustomFields(issueID string) (jira.CustomFields, error)
 	IssueSearch(query string, opts *jira.SearchOptions) ([]jira.Issue, error)
 }
 
@@ -162,10 +161,4 @@ func (c *Client) GetIssuesForBoard(boardName string) ([]jira.Issue, error) {
 	}
 
 	return result.Issues, nil
-}
-
-// GetIssueCustomFields returns all custom field data for a given Issue
-func (c *Client) GetIssueCustomFields(issueID string) (jira.CustomFields, error) {
-	fields, _, err := c.jira.Issue.GetCustomFields(issueID)
-	return fields, err
 }

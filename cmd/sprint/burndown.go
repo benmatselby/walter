@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strconv"
 	"text/tabwriter"
 
 	goJira "github.com/andygrunwald/go-jira"
@@ -17,6 +16,7 @@ import (
 type BurndownOptions struct {
 	Args       []string
 	FilterType string
+	MaxResults int
 }
 
 // NewBurndownCommand creates a new `sprint burndown` command
@@ -39,6 +39,7 @@ func NewBurndownCommand(client jira.API) *cobra.Command {
 
 	flags := cmd.Flags()
 	flags.StringVar(&opts.FilterType, "filter-type", "", "Filter the output based on item type: Story, Sub-task")
+	flags.IntVar(&opts.MaxResults, "max-results", 100, "The amount of records to display")
 
 	return cmd
 }
@@ -48,33 +49,35 @@ func ShowBurndown(client jira.API, opts BurndownOptions, w io.Writer) error {
 	boardName := opts.Args[0]
 	sprintName := opts.Args[1]
 
-	issues, err := client.GetIssues(boardName, sprintName)
+	query := fmt.Sprintf("sprint = '%s'", sprintName)
+
+	if opts.FilterType != "" {
+		query += fmt.Sprintf(" and type = '%s'", opts.FilterType)
+	}
+
+	searchOpts := goJira.SearchOptions{
+		MaxResults: opts.MaxResults,
+	}
+	issues, err := client.IssueSearch(query, &searchOpts)
 	if err != nil {
 		return err
 	}
 
 	items := make(map[string][]goJira.Issue)
 
-	// Now build a map|slice|array (!) of
-	// BoardColumn => Isues[]
 	for index := 0; index < len(issues); index++ {
 		item := issues[index]
-
-		if opts.FilterType != "" && opts.FilterType != item.Fields.Type.Name {
-			continue
-		}
-
 		key := item.Fields.Status.Name
 		items[key] = append(items[key], item)
 	}
 
-	storyFieldKey := fmt.Sprintf("boards.%s.story_point_field", boardName)
-	storyField := viper.GetString(storyFieldKey)
+	storyField := viper.GetString(fmt.Sprintf("boards.%s.story_point_field", boardName))
+	storyFields := viper.GetStringSlice(fmt.Sprintf("boards.%s.story_point_fields", boardName))
 
 	ui := ""
 
-	if storyField == "" {
-		ui += fmt.Sprintf("There was no story point field (%s) defined in your configuration file, so cannot calculate points", storyFieldKey)
+	if storyField == "" && len(storyFields) == 0 {
+		ui += fmt.Sprintf("There was no story point field(s) defined in your configuration file, so cannot calculate points")
 	}
 
 	layout, err := client.GetBoardLayout(boardName)
@@ -92,16 +95,18 @@ func ShowBurndown(client jira.API, opts BurndownOptions, w io.Writer) error {
 		itemCount := len(items[column])
 
 		for _, item := range items[column] {
-			fields, err := client.GetIssueCustomFields(item.ID)
-			if err != nil {
-				points = 0
+			value := item.Fields.Unknowns[storyField]
+			if value != nil {
+				points += int(value.(float64))
+			} else {
+				for _, key := range storyFields {
+					value := item.Fields.Unknowns[key]
+					if value != nil {
+						points += int(value.(float64))
+						break
+					}
+				}
 			}
-
-			v, err := strconv.Atoi(fields[storyField])
-			if err != nil {
-				v = 0
-			}
-			points += v
 		}
 		totalPoints += points
 		totalItems += itemCount
