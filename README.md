@@ -29,7 +29,7 @@ Use "walter [command] --help" for more information about a command.
 
 ## Requirements
 
-If you are wanting to build and develop this, you will need the following items installed. If, however, you just want to run the application I recommend using the docker container (See below)
+If you are wanting to build and develop this, you will need the following items installed. If, however, you just want to run the application I recommend using the docker container (See below).
 
 - Go version 1.11+
 
@@ -45,11 +45,11 @@ export JIRA_URL=""
 export JIRA_USERNAME=""
 ```
 
-Creating a Jira API Token is documented [here](https://confluence.atlassian.com/cloud/api-tokens-938839638.html)
+Creating a Jira API Token is documented [here](https://confluence.atlassian.com/cloud/api-tokens-938839638.html).
 
 ### Application configuration file
 
-Long term this may not be required, but right now we need a configuration file (by default, `~/.walter/config.yaml`)
+Long term this may not be required, but right now we need a configuration file (by default, `~/.walter/config.yaml`).
 
 An example:
 
@@ -68,11 +68,13 @@ boards:
       - Done
 ```
 
-- **boards** - This is the top level node for board configuration
-- **My special board** - This is the name of the board (`walter board list`)
-- **story_point_field** - This defines the custom field that is houses the story point estimation (If you do not define this, the sprint.burndown command does not fully render all the information). If you know there is only one field in your system for story points, define this field.
-- **story_point_fields** - This defines the custom fields that should be used in conjunction with one another for the story point estimation. It turns out that some projects have multiple fields defined over time! _I highly recommend against this_. It will try to use `story_point_field` first, and then iterate every field defined in this config until it gets a story point value.
-- **layout** - This is the names of the columns on the board (I am struggling to find an API endpoint that documents this)
+| Item                 | Description                                                                                                                                                                                                                                                                                                                                                        |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `boards`             | This is the top level node for board configuration.                                                                                                                                                                                                                                                                                                                |
+| `My special board`   | This is the name of the board (`walter board list`).                                                                                                                                                                                                                                                                                                               |
+| `story_point_field`  | This defines the custom field that is houses the story point estimation (If you do not define this, the sprint.burndown command does not fully render all the information). If you know there is only one field in your system for story points, define this field.                                                                                                |
+| `story_point_fields` | This defines the custom fields that should be used in conjunction with one another for the story point estimation. It turns out that some projects have multiple fields defined over time! _I highly recommend against this_. It will try to use `story_point_field` first, and then iterate every field defined in this config until it gets a story point value. |
+| `layout`             | This is the names of the columns on the board (I am struggling to find an API endpoint that documents this).                                                                                                                                                                                                                                                       |
 
 ## Installation via Docker
 
@@ -97,3 +99,15 @@ cd walter
 make all
 ./walter
 ```
+
+You can also install into your `$GOPATH/bin` by running `make build && go install`.
+
+## Testing
+
+To generate the code used to mock away the Jira interaction, run the following command.
+
+```shell
+mockgen -source jira/jira.go
+```
+
+This will generate you some source code you can copy into `jira/mock_jira.go`. You will need to change the package to `jira`.
