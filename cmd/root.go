@@ -43,7 +43,7 @@ func NewRootCommand(client jira.API) *cobra.Command {
 		Short: "CLI application for retrieving data from Jira",
 	}
 
-	cmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.walter/config.yaml)")
+	cmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.benmatselby/walter.yaml)")
 
 	cmd.AddCommand(
 		board.NewBoardCommand(client),
@@ -66,10 +66,8 @@ func initConfig() {
 			os.Exit(1)
 		}
 
-		// Search config in home directory with name ".walter" (without extension).
-		path := strings.Join([]string{home, ".walter"}, "/")
-		viper.AddConfigPath(path)
-		viper.SetConfigName("config")
+		viper.AddConfigPath(strings.Join([]string{home, ".benmatselby"}, "/"))
+		viper.SetConfigName("walter")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

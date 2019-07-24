@@ -20,7 +20,7 @@ Available Commands:
   sprint      Sprint related commands
 
 Flags:
-      --config string   config file (default is $HOME/.walter/config.yaml)
+      --config string   config file (default is $HOME/.benmatselby/walter.yaml)
   -h, --help            help for walter
   -t, --toggle          Help message for toggle
 
@@ -49,7 +49,7 @@ Creating a Jira API Token is documented [here](https://confluence.atlassian.com/
 
 ### Application configuration file
 
-Long term this may not be required, but right now we need a configuration file (by default, `~/.walter/config.yaml`).
+Long term this may not be required, but right now we need a configuration file (by default, `~/.benmatselby/walter.yaml`).
 
 An example:
 
@@ -82,13 +82,13 @@ Other than requiring [docker](http://docker.com) to be installed, there are no o
 
 ```shell
 $ docker run \
-    --rm \
-    -t \
-    -eJIRA_TOKEN \
-    -eJIRA_URL \
-    -eJIRA_USERNAME \
-    -v "${HOME}/.walter":/root/.walter \
-    benmatselby/walter "$@"
+  --rm \
+  -t \
+  -eJIRA_TOKEN \
+  -eJIRA_URL \
+  -eJIRA_USERNAME \
+  -v "${HOME}/.benmatselby":/root/.benmatselby \
+  benmatselby/walter "$@"
 ```
 
 ## Installation via Git

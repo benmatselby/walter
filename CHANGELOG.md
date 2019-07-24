@@ -2,6 +2,10 @@
 
 ## next
 
+## 2.0.0
+
+- The configuration file has now moved to `~/.benmatselby/walter.yml`.
+
 ## 1.0.0
 
 - First initial versioned release of walter.
