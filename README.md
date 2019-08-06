@@ -91,6 +91,12 @@ $ docker run \
   benmatselby/walter "$@"
 ```
 
+**Note** - if you get the following error when running this on Windows using [docker desktop for Windows](https://hub.docker.com/editions/community/docker-ce-desktop-windows):
+
+`Failed to load config: Config File "walter" Not Found in "[/root/.benmatselby]"`
+
+Then you may need to reset your credentials in _[docker](http://docker.com) > Settings > Shared Drives > Reset credentials_, because it uses shared drives for mounting volumes and caches Active Directory credentials.
+
 ## Installation via Git
 
 ```shell
