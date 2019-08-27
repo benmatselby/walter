@@ -1,7 +1,6 @@
 # Walter
 
-[![Build Status](https://travis-ci.org/benmatselby/walter.png?branch=master)](https://travis-ci.org/benmatselby/walter)
-[![codecov](https://codecov.io/gh/benmatselby/walter/branch/master/graph/badge.svg)](https://codecov.io/gh/benmatselby/walter)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=walter&metric=alert_status)](https://sonarcloud.io/dashboard?id=walter)
 [![Go Report Card](https://goreportcard.com/badge/github.com/benmatselby/walter)](https://goreportcard.com/report/github.com/benmatselby/walter)
 
 _That rug really tied the room together, did it not?_
