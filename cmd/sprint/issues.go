@@ -51,6 +51,11 @@ func ListIssues(client jira.API, opts IssueOptions, w io.Writer) error {
 
 	query := fmt.Sprintf("sprint = '%s'", sprintName)
 
+	if len(opts.Args) > 2 {
+		projectName := opts.Args[2]
+		query += fmt.Sprintf(" and project = '%s'", projectName)
+	}
+	
 	if opts.FilterType != "" {
 		query += fmt.Sprintf(" and type = '%s'", opts.FilterType)
 	}

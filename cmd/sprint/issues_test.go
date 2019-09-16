@@ -34,11 +34,32 @@ func TestNewIssuesCommand(t *testing.T) {
 func TestNewIssuesCommandReturnsOutput(t *testing.T) {
 	tt := []struct {
 		name   string
+		args   []string
+		query  string
 		output string
 		err    error
 	}{
-		{name: "can return a list of issues", output: "\nTodo\n====\n* KEY-1 - Issue 1\n", err: nil},
-		{name: "returns error if we cannot get list of issues", output: "", err: errors.New("something")},
+		{
+			name: "can return a list of issues",
+			args: []string{"board", "sprint"},
+			query: "sprint = 'sprint' and type = 'Story'",
+			output: "\nTodo\n====\n* KEY-1 - Issue 1\n",
+			err: nil,
+		},
+		{
+			name: "returns error if we cannot get list of issues",
+			args: []string{"board", "sprint"},
+			query: "sprint = 'sprint' and type = 'Story'",
+			output: "", 
+			err: errors.New("something"),
+		},
+		{
+			name: "returns a list of issue given a project name",
+			args: []string{"board", "sprint", "project"},
+			query: "sprint = 'sprint' and project = 'project' and type = 'Story'",
+			output: "\nTodo\n====\n* KEY-1 - Issue 1\n",
+			err: nil,
+		},
 	}
 
 	for _, tc := range tt {
@@ -62,7 +83,7 @@ func TestNewIssuesCommandReturnsOutput(t *testing.T) {
 
 			client.
 				EXPECT().
-				IssueSearch(gomock.Eq("sprint = 'sprint' and type = 'Story'"), gomock.Eq(&goJira.SearchOptions{MaxResults: 7})).
+				IssueSearch(gomock.Eq(tc.query), gomock.Eq(&goJira.SearchOptions{MaxResults: 7})).
 				Return(issues, tc.err).
 				AnyTimes()
 
@@ -76,7 +97,7 @@ func TestNewIssuesCommandReturnsOutput(t *testing.T) {
 			writer := bufio.NewWriter(&b)
 
 			opts := sprint.IssueOptions{
-				Args:       []string{"board", "sprint"},
+				Args:       tc.args,
 				MaxResults: 7,
 				FilterType: "Story",
 			}
