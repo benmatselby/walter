@@ -2,6 +2,10 @@
 
 ## next
 
+## 2.1.0
+
+- Addition of the `-v` flag on the `sprint list` command.
+
 ## 2.0.0
 
 - The configuration file has now moved to `~/.benmatselby/walter.yml`.
