@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/benmatselby/walter/cmd/sprint"
 
@@ -35,12 +36,21 @@ func TestNewListCommand(t *testing.T) {
 func TestDisplayBoards(t *testing.T) {
 
 	tt := []struct {
-		name   string
-		output string
-		err    error
+		name    string
+		verbose bool
+		args    []string
+		output  string
+		err     error
 	}{
-		{name: "can return a list of sprints", output: "2019.1\n", err: nil},
-		{name: "returns error if we cannot get list of sprints", output: "", err: errors.New("something")},
+		{name: "can return a list of sprints", output: "2019.1\n", verbose: false, args: []string{"board"}, err: nil},
+		{name: "can be verbose when asked", output: `2019.1
+ ID: 717
+ Start date: 2019-08-01 09:00:00 +0000 UTC
+ End date: 2019-08-14 17:00:00 +0000 UTC
+ Completed date: 2019-08-14 16:00:00 +0000 UTC
+
+`, verbose: true, args: []string{"board"}, err: nil},
+		{name: "returns error if we cannot get list of sprints", output: "", verbose: false, args: []string{"board"}, err: errors.New("something")},
 	}
 
 	for _, tc := range tt {
@@ -49,9 +59,16 @@ func TestDisplayBoards(t *testing.T) {
 			defer ctrl.Finish()
 			client := jira.NewMockAPI(ctrl)
 
+			start, _ := time.Parse(time.RFC3339, "2019-08-01T09:00:00Z")
+			completed, _ := time.Parse(time.RFC3339, "2019-08-14T16:00:00Z")
+			end, _ := time.Parse(time.RFC3339, "2019-08-14T17:00:00Z")
 			name := "2019.1"
 			jiraSprint := goJira.Sprint{
-				Name: name,
+				Name:         name,
+				ID:           717,
+				StartDate:    &start,
+				CompleteDate: &completed,
+				EndDate:      &end,
 			}
 
 			sprints := make([]goJira.Sprint, 0)
@@ -59,14 +76,19 @@ func TestDisplayBoards(t *testing.T) {
 
 			client.
 				EXPECT().
-				GetSprints("").
+				GetSprints("board").
 				Return(sprints, tc.err).
 				AnyTimes()
 
 			var b bytes.Buffer
 			writer := bufio.NewWriter(&b)
 
-			sprint.ListSprints(client, "", writer)
+			opts := sprint.ListSprintOptions{
+				Verbose: tc.verbose,
+				Args:    tc.args,
+			}
+
+			sprint.ListSprints(client, opts, writer)
 			writer.Flush()
 
 			if b.String() != tc.output {
