@@ -80,7 +80,14 @@ func QueryIssues(client jira.API, opts CommandOptions, w io.Writer) error {
 	}
 
 	for _, issue := range issues {
-		fmt.Fprintf(w, "* %s - %s\n", issue.Key, issue.Fields.Summary)
+		storyPoint := ""
+		if viper.IsSet("fields.story_point_field") {
+			value := issue.Fields.Unknowns[viper.GetString("fields.story_point_field")]
+			if value != nil {
+				storyPoint = fmt.Sprintf("(%d) ", int(value.(float64)))
+			}
+		}
+		fmt.Fprintf(w, "* %s - %s%s\n", issue.Key, storyPoint, issue.Fields.Summary)
 	}
 
 	return nil

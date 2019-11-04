@@ -2,7 +2,7 @@
 
 ## next
 
-- Addition of a `search` command. This allows you to run JQL either via the configuration file (you specify `--template` to find the correct template in the config file), or the CLI `--query` option. It displays the ID, and the title of the issues it finds.
+- Addition of a `search` command. This allows you to run JQL either via the configuration file (you specify `--template` to find the correct template in the config file), or the CLI `--query` option. It displays the ID, and the title of the issues it finds. If `fields.story_point_field` is defined in your configuration, the output will also include the Story Point value.
 
 ## 2.1.0
 
