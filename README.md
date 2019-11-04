@@ -6,7 +6,7 @@
 
 _That rug really tied the room together, did it not?_
 
-CLI application for getting information out of Jira. It's based on [Donny](https://github.com/benmatselby/donny) so the aims are the same:
+CLI application for getting information out of Jira.
 
 ```text
 CLI application for retrieving data from Jira
@@ -17,12 +17,12 @@ Usage:
 Available Commands:
   board       Board related commands
   help        Help about any command
+  search      Search for issues
   sprint      Sprint related commands
 
 Flags:
       --config string   config file (default is $HOME/.benmatselby/walter.yaml)
   -h, --help            help for walter
-  -t, --toggle          Help message for toggle
 
 Use "walter [command] --help" for more information about a command.
 ```
@@ -49,7 +49,11 @@ Creating a Jira API Token is documented [here](https://confluence.atlassian.com/
 
 ### Application configuration file
 
-Long term this may not be required, but right now we need a configuration file (by default, `~/.benmatselby/walter.yaml`).
+There is also a configuration file (by default, `~/.benmatselby/walter.yaml`) that allows you to configure various things:
+
+- The story point field in your Jira instance, per board.
+- The layout of the board (Couldn't find an API to get this at the moment).
+- Template definitions for the `search` command.
 
 An example:
 
@@ -66,15 +70,21 @@ boards:
       - Stuck
       - Review
       - Done
+
+templates:
+  all-open:
+    query: "project = 'My Project' AND status != Completed ORDER BY Summary"
+    count: 200
 ```
 
-| Item                 | Description                                                                                                                                                                                                                                                                                                                                                        |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `boards`             | This is the top level node for board configuration.                                                                                                                                                                                                                                                                                                                |
-| `My special board`   | This is the name of the board (`walter board list`).                                                                                                                                                                                                                                                                                                               |
-| `story_point_field`  | This defines the custom field that is houses the story point estimation (If you do not define this, the sprint.burndown command does not fully render all the information). If you know there is only one field in your system for story points, define this field.                                                                                                |
-| `story_point_fields` | This defines the custom fields that should be used in conjunction with one another for the story point estimation. It turns out that some projects have multiple fields defined over time! _I highly recommend against this_. It will try to use `story_point_field` first, and then iterate every field defined in this config until it gets a story point value. |
-| `layout`             | This is the names of the columns on the board (I am struggling to find an API endpoint that documents this).                                                                                                                                                                                                                                                       |
+| Item                 | Description                                                                                                                                                                                                                                                                                                                                                   |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `boards`             | Top level node for board configuration.                                                                                                                                                                                                                                                                                                                       |
+| `My special board`   | The name of the board (`walter board list`).                                                                                                                                                                                                                                                                                                                  |
+| `story_point_field`  | Defines the custom field that is houses the story point estimation (If you do not define this, the sprint.burndown command does not fully render all the information). If you know there is only one field in your system for story points, define this field.                                                                                                |
+| `story_point_fields` | Defines the custom fields that should be used in conjunction with one another for the story point estimation. It turns out that some projects have multiple fields defined over time! _I highly recommend against this_. It will try to use `story_point_field` first, and then iterate every field defined in this config until it gets a story point value. |
+| `layout`             | The names of the columns on the board (I am struggling to find an API endpoint that documents this).                                                                                                                                                                                                                                                          |
+| `templates`          | Top level node for template configuration.                                                                                                                                                                                                                                                                                                                    |
 
 ## Installation via Docker
 
