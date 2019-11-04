@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/benmatselby/walter/cmd/board"
+	"github.com/benmatselby/walter/cmd/search"
 	"github.com/benmatselby/walter/cmd/sprint"
 	"github.com/benmatselby/walter/jira"
 	homedir "github.com/mitchellh/go-homedir"
@@ -48,6 +49,7 @@ func NewRootCommand(client jira.API) *cobra.Command {
 	cmd.AddCommand(
 		board.NewBoardCommand(client),
 		sprint.NewSprintCommand(client),
+		search.NewSearchCommand(client),
 	)
 
 	return cmd
