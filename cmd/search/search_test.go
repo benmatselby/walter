@@ -108,3 +108,73 @@ func TestQueryIssues(t *testing.T) {
 		})
 	}
 }
+
+func TestQueryIssuesCanHandleStoryPoints(t *testing.T) {
+	tt := []struct {
+		name              string
+		query             string
+		storyPointDefined bool
+		output            string
+	}{
+		{name: "can handle the happy path of the story point defined", query: "status != Completed", storyPointDefined: true, output: "* 101 - (15) Issue 1\n"},
+		{name: "can handle the story point field defined but not value", query: "status != Completed", storyPointDefined: false, output: "* 101 - Issue 1\n"},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+			client := jira.NewMockAPI(ctrl)
+
+			// Setup the configuration via Viper
+			viper.Set("templates.closed-issues.query", "status = Completed")
+			viper.Set("templates.closed-issues.count", 43)
+			viper.Set("fields.story_point_field", "story_point_one")
+
+			// Define the mock jira issues
+			unknowns := make(map[string]interface{})
+			if tc.storyPointDefined {
+				unknowns["story_point_one"] = 15.0
+			}
+
+			fields := goJira.IssueFields{
+				Summary:  "Issue 1",
+				Status:   &goJira.Status{Name: "Todo"},
+				Unknowns: unknowns,
+			}
+
+			jiraIssues := goJira.Issue{
+				Key:    "101",
+				Fields: &fields,
+			}
+
+			issues := make([]goJira.Issue, 0)
+			issues = append(issues, jiraIssues)
+
+			opts := search.CommandOptions{
+				MaxResults: 41,
+				Query:      tc.query,
+			}
+
+			searchOpts := goJira.SearchOptions{
+				MaxResults: 41,
+			}
+
+			client.
+				EXPECT().
+				IssueSearch(gomock.Eq(tc.query), gomock.Eq(&searchOpts)).
+				Return(issues, nil).
+				AnyTimes()
+
+			var b bytes.Buffer
+			writer := bufio.NewWriter(&b)
+
+			search.QueryIssues(client, opts, writer)
+			writer.Flush()
+
+			if b.String() != tc.output {
+				t.Fatalf("expected '%s'; got '%s'", tc.output, b.String())
+			}
+		})
+	}
+}
