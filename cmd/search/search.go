@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"text/tabwriter"
 
 	goJira "github.com/andygrunwald/go-jira"
 	"github.com/benmatselby/walter/jira"
@@ -19,6 +20,7 @@ const (
 // CommandOptions defines the options available for searching
 type CommandOptions struct {
 	Args       []string
+	Format     string
 	MaxResults int
 	Query      string
 	Template   string
@@ -43,6 +45,7 @@ func NewSearchCommand(client jira.API) *cobra.Command {
 	}
 
 	flags := cmd.Flags()
+	flags.StringVarP(&opts.Format, "format", "f", "list", "The format of the output: list, table")
 	flags.IntVar(&opts.MaxResults, "max-results", DefaultMaxResults, "The amount of records to display")
 	flags.StringVarP(&opts.Query, "query", "q", "", "The JQL you want to run")
 	flags.StringVarP(&opts.Template, "template", "t", "", "The name of the template that as the JQL you want to run")
@@ -79,6 +82,51 @@ func QueryIssues(client jira.API, opts CommandOptions, w io.Writer) error {
 		return err
 	}
 
+	if opts.Format == "table" {
+		renderTable(issues, w)
+	} else {
+		renderList(issues, w)
+	}
+
+	return nil
+}
+
+func renderTable(issues []goJira.Issue, w io.Writer) {
+	tw := tabwriter.NewWriter(w, 0, 1, 1, ' ', 0)
+	fmt.Fprintf(tw, "%s\t%s\n", "Metric", "Count")
+	fmt.Fprintf(tw, "%s\t%s\n", "------", "-----")
+	totalPoints := 0
+	totalUnestimated := 0
+
+	pointsUsed := false
+	if viper.IsSet("fields.story_point_field") {
+		pointsUsed = true
+	}
+
+	for _, issue := range issues {
+		if pointsUsed {
+			value := issue.Fields.Unknowns[viper.GetString("fields.story_point_field")]
+			if value != nil {
+				totalPoints += int(value.(float64))
+			} else {
+				totalUnestimated++
+			}
+		}
+	}
+
+	fmt.Fprintf(tw, "%s\t%d\n", "Issues", len(issues))
+
+	if pointsUsed {
+		fmt.Fprintf(tw, "%s\t%d\n", "Points", totalPoints)
+		fmt.Fprintf(tw, "%s\t%d\n", "Not pointed", totalUnestimated)
+	}
+
+	fmt.Fprintf(tw, "%s\t%s\n", "------", "-----")
+
+	tw.Flush()
+}
+
+func renderList(issues []goJira.Issue, w io.Writer) {
 	for _, issue := range issues {
 		storyPoint := ""
 		if viper.IsSet("fields.story_point_field") {
@@ -89,6 +137,4 @@ func QueryIssues(client jira.API, opts CommandOptions, w io.Writer) error {
 		}
 		fmt.Fprintf(w, "* %s - %s%s\n", issue.Key, storyPoint, issue.Fields.Summary)
 	}
-
-	return nil
 }

@@ -35,6 +35,7 @@ func TestCommandOptions(t *testing.T) {
 func TestQueryIssues(t *testing.T) {
 	tt := []struct {
 		name               string
+		format             string
 		query              string
 		template           string
 		maxResults         int
@@ -48,6 +49,11 @@ func TestQueryIssues(t *testing.T) {
 		{name: "can handle an error from the search", query: "status != Completed", maxResults: 10, expectedMaxResults: 10, expectedQuery: "status != Completed", output: "* 101 - Issue 1\n", err: errors.New("boom")},
 		{name: "can handle the fact we dont pass template or query", query: "", expectedMaxResults: 43, err: errors.New("please use --query or --template to search")},
 		{name: "can handle the fact a template may not be defined", template: "undefined-flim-flam", expectedMaxResults: 43, err: errors.New("undefined-flim-flam is not defined")},
+		{name: "can return a table of issues via query option", query: "status != Completed", format: "table", maxResults: 10, expectedMaxResults: 10, expectedQuery: "status != Completed", output: `Metric Count
+------ -----
+Issues 1
+------ -----
+`, err: nil},
 	}
 
 	for _, tc := range tt {
@@ -75,6 +81,7 @@ func TestQueryIssues(t *testing.T) {
 			issues = append(issues, jiraIssues)
 
 			opts := search.CommandOptions{
+				Format:     tc.format,
 				MaxResults: tc.maxResults,
 				Query:      tc.query,
 				Template:   tc.template,
@@ -112,12 +119,27 @@ func TestQueryIssues(t *testing.T) {
 func TestQueryIssuesCanHandleStoryPoints(t *testing.T) {
 	tt := []struct {
 		name              string
+		format            string
 		query             string
 		storyPointDefined bool
 		output            string
 	}{
 		{name: "can handle the happy path of the story point defined", query: "status != Completed", storyPointDefined: true, output: "* 101 - (15) Issue 1\n"},
 		{name: "can handle the story point field defined but not value", query: "status != Completed", storyPointDefined: false, output: "* 101 - Issue 1\n"},
+		{name: "can return a table of issues via query option", query: "status != Completed", format: "table", output: `Metric      Count
+------      -----
+Issues      1
+Points      0
+Not pointed 1
+------      -----
+`},
+		{name: "can return a table of issues via query option", query: "status != Completed", storyPointDefined: true, format: "table", output: `Metric      Count
+------      -----
+Issues      1
+Points      15
+Not pointed 0
+------      -----
+`},
 	}
 
 	for _, tc := range tt {
@@ -152,6 +174,7 @@ func TestQueryIssuesCanHandleStoryPoints(t *testing.T) {
 			issues = append(issues, jiraIssues)
 
 			opts := search.CommandOptions{
+				Format:     tc.format,
 				MaxResults: 41,
 				Query:      tc.query,
 			}

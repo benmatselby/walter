@@ -71,6 +71,9 @@ boards:
       - Review
       - Done
 
+fields:
+  story_point_field: customfield_10911
+
 templates:
   all-open:
     query: "project = 'My Project' AND status != Completed ORDER BY Summary"
