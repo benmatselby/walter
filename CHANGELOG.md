@@ -2,6 +2,8 @@
 
 ## next
 
+## 2.2.1
+
 - Bump the dependencies.
 - Run the GitHub actions on multiple versions of Go.
 - List all the boards, not just the limit of 50. Thanks to [Richard Neal](https://github.com/Richard-W-Neal) for raising.
