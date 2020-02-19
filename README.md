@@ -102,8 +102,16 @@ $ docker run \
   -eJIRA_URL \
   -eJIRA_USERNAME \
   -v "${HOME}/.benmatselby":/root/.benmatselby \
-  benmatselby/walter "$@"
+  benmatselby/walter:latest "$@"
 ```
+
+The `latest` tag mentioned above can be changed to a released version. For all releases, see [here](https://hub.docker.com/repository/docker/benmatselby/walter/tags). An example would then be:
+
+```shell
+benmatselby/walter:version-2.2.0
+```
+
+This would use the `verson-2.2.0` release in the docker command.
 
 **Note** - if you get the following error when running this on Windows using [docker desktop for Windows](https://hub.docker.com/editions/community/docker-ce-desktop-windows):
 
