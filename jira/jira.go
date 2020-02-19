@@ -50,13 +50,24 @@ func (c *Client) IssueSearch(query string, opts *jira.SearchOptions) ([]jira.Iss
 
 // GetBoards will return the boards you can access
 func (c *Client) GetBoards() ([]jira.Board, error) {
-	opts := jira.BoardListOptions{}
-	list, _, err := c.jira.Board.GetAllBoards(&opts)
-	if err != nil {
-		return nil, err
+	var boards []jira.Board
+	start := 0
+	for {
+		search := jira.SearchOptions{StartAt: start}
+		opts := &jira.BoardListOptions{SearchOptions: search}
+		list, _, err := c.jira.Board.GetAllBoards(opts)
+		if err != nil {
+			return nil, err
+		}
+
+		start += len(list.Values)
+		boards = append(boards, list.Values...)
+
+		if list.IsLast {
+			break
+		}
 	}
 
-	boards := list.Values
 	sort.Slice(boards, func(i, j int) bool { return boards[i].Name < boards[j].Name })
 
 	return boards, nil
