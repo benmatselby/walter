@@ -75,12 +75,13 @@ func (c *Client) GetBoards() ([]jira.Board, error) {
 
 // GetBoard will return a single board given a name
 func (c *Client) GetBoard(name string) (*jira.Board, error) {
-	list, err := c.GetBoards()
+	opts := &jira.BoardListOptions{Name: name}
+	list, _, err := c.jira.Board.GetAllBoards(opts)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, item := range list {
+	for _, item := range list.Values {
 		if item.Name == name {
 			return &item, nil
 		}
