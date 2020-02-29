@@ -1,4 +1,4 @@
-FROM golang:alpine as builder
+FROM golang:1.14-alpine as builder
 LABEL maintainer="Ben Selby <benmatselby@gmail.com>"
 
 ENV APPNAME walter
@@ -9,14 +9,14 @@ ENV GO111MODULE on
 COPY . /go/src/github.com/benmatselby/${APPNAME}
 
 RUN apk update && \
-    apk add --no-cache --virtual .build-deps \
-		ca-certificates \
-		gcc \
-		libc-dev \
-		libgcc \
-		git \
-		curl \
-		make
+	apk add --no-cache --virtual .build-deps \
+	ca-certificates \
+	gcc \
+	libc-dev \
+	libgcc \
+	git \
+	curl \
+	make
 
 RUN cd /go/src/github.com/benmatselby/${APPNAME} && \
 	go get -u golang.org/x/lint/golint && \
