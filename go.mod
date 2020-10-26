@@ -1,7 +1,7 @@
 module github.com/benmatselby/walter
 
 require (
-	github.com/andygrunwald/go-jira v1.12.0
+	github.com/andygrunwald/go-jira v1.13.0
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/golang/mock v1.4.4
 	github.com/google/go-querystring v1.0.0 // indirect
