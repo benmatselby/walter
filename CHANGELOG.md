@@ -2,8 +2,8 @@
 
 ## next
 
-- Bumped docker image to Go 1.14 runtime.
-- Bump the build environment to test on 1.12, 1.13, and 1.14.
+- Bumped docker image to Go 1.16 runtime.
+- Bump the build environment to test on 1.16.
 
 ## 2.2.1
 

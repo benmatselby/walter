@@ -1,10 +1,9 @@
-FROM golang:1.15-alpine as builder
+FROM golang:1.16-alpine as builder
 LABEL maintainer="Ben Selby <benmatselby@gmail.com>"
 
 ENV APPNAME walter
 ENV PATH /go/bin:/usr/local/go/bin:$PATH
 ENV GOPATH /go
-ENV GO111MODULE on
 
 COPY . /go/src/github.com/benmatselby/${APPNAME}
 
@@ -19,7 +18,6 @@ RUN apk update && \
 	make
 
 RUN cd /go/src/github.com/benmatselby/${APPNAME} && \
-	go get -u golang.org/x/lint/golint && \
 	make static-all  && \
 	mv ${APPNAME} /usr/bin/${APPNAME}  && \
 	apk del .build-deps  && \
