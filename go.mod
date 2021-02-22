@@ -3,7 +3,7 @@ module github.com/benmatselby/walter
 require (
 	github.com/andygrunwald/go-jira v1.13.0
 	github.com/fatih/structs v1.1.0 // indirect
-	github.com/golang/mock v1.4.4
+	github.com/golang/mock v1.5.0
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pelletier/go-toml v1.8.1 // indirect
