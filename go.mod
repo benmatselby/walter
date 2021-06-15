@@ -3,7 +3,7 @@ module github.com/benmatselby/walter
 require (
 	github.com/andygrunwald/go-jira v1.13.0
 	github.com/fatih/structs v1.1.0 // indirect
-	github.com/golang/mock v1.5.0
+	github.com/golang/mock v1.6.0
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pelletier/go-toml v1.8.1 // indirect
@@ -14,7 +14,6 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/viper v1.7.1
 	github.com/trivago/tgo v1.0.7 // indirect
-	golang.org/x/sys v0.0.0-20210217090653-ed5674b6da4a // indirect
 	gopkg.in/ini.v1 v1.62.0 // indirect
 )
 
