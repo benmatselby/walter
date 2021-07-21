@@ -91,9 +91,10 @@ templates:
 
 ## Installation via Docker
 
-Other than requiring [docker](http://docker.com) to be installed, there are no other requirements to run the application this way. This is the preferred method of running the `walter`. The image is [here](https://hub.docker.com/r/benmatselby/walter/).
+Other than requiring [docker](http://docker.com) to be installed, there are no other requirements to run the application this way.
 
 ```shell
+$ docker build -t benmatselby/walter .
 $ docker run \
   --rm \
   -t \
