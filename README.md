@@ -1,7 +1,6 @@
 # Walter
 
 ![GitHub Badge](https://github.com/benmatselby/walter/workflows/Go/badge.svg)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=walter&metric=alert_status)](https://sonarcloud.io/dashboard?id=walter)
 [![Go Report Card](https://goreportcard.com/badge/github.com/benmatselby/walter)](https://goreportcard.com/report/github.com/benmatselby/walter)
 
 _That rug really tied the room together, did it not?_
@@ -92,9 +91,10 @@ templates:
 
 ## Installation via Docker
 
-Other than requiring [docker](http://docker.com) to be installed, there are no other requirements to run the application this way. This is the preferred method of running the `walter`. The image is [here](https://hub.docker.com/r/benmatselby/walter/).
+Other than requiring [docker](http://docker.com) to be installed, there are no other requirements to run the application this way.
 
 ```shell
+$ docker build -t benmatselby/walter .
 $ docker run \
   --rm \
   -t \
