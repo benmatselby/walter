@@ -4,11 +4,11 @@ jobs:
   build:
     strategy:
       matrix:
-        go-version: [1.16.x]
+        go-version: [1.17.x]
     runs-on: ubuntu-latest
     name: Build
     steps:
-      - name: Set up Go 1.12
+      - name: Set up Go
         uses: actions/setup-go@v2.1.3
         with:
           go-version: ${{ matrix.go-version }}
@@ -32,4 +32,3 @@ jobs:
       - name: Test
         run: |
           make test
-
