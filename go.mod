@@ -1,7 +1,7 @@
 module github.com/benmatselby/walter
 
 require (
-	github.com/andygrunwald/go-jira v1.15.0
+	github.com/andygrunwald/go-jira v1.15.1
 	github.com/golang/mock v1.6.0
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
