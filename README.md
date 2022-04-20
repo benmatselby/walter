@@ -30,7 +30,7 @@ Use "walter [command] --help" for more information about a command.
 
 If you are wanting to build and develop this, you will need the following items installed. If, however, you just want to run the application I recommend using the docker container (See below).
 
-- Go version 1.16+
+- Go version 1.18+
 
 ## Configuration
 
