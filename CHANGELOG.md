@@ -2,7 +2,7 @@
 
 ## next
 
-- Bumped docker image to Go 1.17 runtime.
+- Bumped docker image to Go 1.18 runtime.
 
 ## 2.3.0
 
