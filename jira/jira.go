@@ -18,6 +18,7 @@ type API interface {
 	GetIssues(boardName, sprintName string) ([]jira.Issue, error)
 	GetIssuesForBoard(boardName string) ([]jira.Issue, error)
 	IssueSearch(query string, opts *jira.SearchOptions) ([]jira.Issue, error)
+	GetStoryPoint(boardName string, issue jira.Issue) (int, error)
 }
 
 // Client is the concrete implementation of the API interface
@@ -96,7 +97,7 @@ func (c *Client) GetBoardLayout(name string) ([]string, error) {
 	ok := viper.IsSet(layoutKey)
 
 	if !ok {
-		return nil, fmt.Errorf("%s is not defined in the configuration file", layoutKey)
+		return nil, fmt.Errorf("%s is not defined in the configuration file.\n", layoutKey)
 	}
 
 	return viper.GetStringSlice(layoutKey), nil
@@ -173,4 +174,28 @@ func (c *Client) GetIssuesForBoard(boardName string) ([]jira.Issue, error) {
 	}
 
 	return result.Issues, nil
+}
+
+func (c *Client) GetStoryPoint(boardName string, issue jira.Issue) (int, error) {
+	storyField := viper.GetString(fmt.Sprintf("boards.%s.story_point_field", boardName))
+	storyFields := viper.GetStringSlice(fmt.Sprintf("boards.%s.story_point_fields", boardName))
+
+	if storyField == "" && len(storyFields) == 0 {
+		return 0, fmt.Errorf("no story point value defined")
+	}
+
+	value := issue.Fields.Unknowns[storyField]
+
+	if value != nil {
+		return int(value.(float64)), nil
+	} else {
+		for _, key := range storyFields {
+			value := issue.Fields.Unknowns[key]
+			if value != nil {
+				return int(value.(float64)), nil
+			}
+		}
+	}
+
+	return 0, fmt.Errorf("could not get story point value")
 }

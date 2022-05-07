@@ -9,7 +9,6 @@ import (
 	goJira "github.com/andygrunwald/go-jira"
 	"github.com/benmatselby/walter/jira"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // BurndownOptions defines what arguments/options the user can provide
@@ -71,18 +70,9 @@ func ShowBurndown(client jira.API, opts BurndownOptions, w io.Writer) error {
 		items[key] = append(items[key], item)
 	}
 
-	storyField := viper.GetString(fmt.Sprintf("boards.%s.story_point_field", boardName))
-	storyFields := viper.GetStringSlice(fmt.Sprintf("boards.%s.story_point_fields", boardName))
-
-	ui := ""
-
-	if storyField == "" && len(storyFields) == 0 {
-		ui += fmt.Sprintf("There was no story point field(s) defined in your configuration file, so cannot calculate points")
-	}
-
 	layout, err := client.GetBoardLayout(boardName)
 	if err != nil {
-		ui += err.Error()
+		return err
 	}
 
 	tw := tabwriter.NewWriter(w, 0, 1, 1, ' ', 0)
@@ -95,18 +85,8 @@ func ShowBurndown(client jira.API, opts BurndownOptions, w io.Writer) error {
 		itemCount := len(items[column])
 
 		for _, item := range items[column] {
-			value := item.Fields.Unknowns[storyField]
-			if value != nil {
-				points += int(value.(float64))
-			} else {
-				for _, key := range storyFields {
-					value := item.Fields.Unknowns[key]
-					if value != nil {
-						points += int(value.(float64))
-						break
-					}
-				}
-			}
+			value, _ := client.GetStoryPoint(boardName, item)
+			points += value
 		}
 		totalPoints += points
 		totalItems += itemCount
