@@ -105,7 +105,7 @@ Total  1     1
 
 			client.
 				EXPECT().
-				GetStoryPoint(gomock.Eq("board"), gomock.Any()).
+				GetStoryPoint(gomock.Any(), gomock.Eq("board")).
 				Return(1, nil).
 				AnyTimes()
 
