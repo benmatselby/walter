@@ -83,34 +83,29 @@ func QueryIssues(client jira.API, opts CommandOptions, w io.Writer) error {
 	}
 
 	if opts.Format == "table" {
-		renderTable(issues, w)
+		renderTable(client, issues, w)
 	} else {
-		renderList(issues, w)
+		renderList(client, issues, w)
 	}
 
 	return nil
 }
 
-func renderTable(issues []goJira.Issue, w io.Writer) {
+func renderTable(client jira.API, issues []goJira.Issue, w io.Writer) {
 	tw := tabwriter.NewWriter(w, 0, 1, 1, ' ', 0)
 	fmt.Fprintf(tw, "%s\t%s\n", "Metric", "Count")
 	fmt.Fprintf(tw, "%s\t%s\n", "------", "-----")
 	totalPoints := 0
 	totalUnestimated := 0
-
 	pointsUsed := false
-	if viper.IsSet("fields.story_point_field") {
-		pointsUsed = true
-	}
 
 	for _, issue := range issues {
-		if pointsUsed {
-			value := issue.Fields.Unknowns[viper.GetString("fields.story_point_field")]
-			if value != nil {
-				totalPoints += int(value.(float64))
-			} else {
-				totalUnestimated++
-			}
+		value, err := client.GetStoryPoint(issue, "")
+		if err != nil {
+			totalUnestimated++
+		} else {
+			totalPoints += value
+			pointsUsed = true
 		}
 	}
 
@@ -126,15 +121,14 @@ func renderTable(issues []goJira.Issue, w io.Writer) {
 	tw.Flush()
 }
 
-func renderList(issues []goJira.Issue, w io.Writer) {
+func renderList(client jira.API, issues []goJira.Issue, w io.Writer) {
 	for _, issue := range issues {
 		storyPoint := ""
-		if viper.IsSet("fields.story_point_field") {
-			value := issue.Fields.Unknowns[viper.GetString("fields.story_point_field")]
-			if value != nil {
-				storyPoint = fmt.Sprintf("(%d) ", int(value.(float64)))
-			}
+		sp, err := client.GetStoryPoint(issue, "")
+		if err == nil {
+			storyPoint = fmt.Sprintf("(%d) ", sp)
 		}
+
 		fmt.Fprintf(w, "* %s - %s%s\n", issue.Key, storyPoint, issue.Fields.Summary)
 	}
 }

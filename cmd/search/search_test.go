@@ -97,6 +97,12 @@ Issues 1
 				Return(issues, tc.err).
 				AnyTimes()
 
+			client.
+				EXPECT().
+				GetStoryPoint(gomock.Any(), gomock.Any()).
+				Return(0, errors.New("boom")).
+				AnyTimes()
+
 			var b bytes.Buffer
 			writer := bufio.NewWriter(&b)
 
@@ -126,19 +132,17 @@ func TestQueryIssuesCanHandleStoryPoints(t *testing.T) {
 	}{
 		{name: "can handle the happy path of the story point defined", query: "status != Completed", storyPointDefined: true, output: "* 101 - (15) Issue 1\n"},
 		{name: "can handle the story point field defined but not value", query: "status != Completed", storyPointDefined: false, output: "* 101 - Issue 1\n"},
-		{name: "can return a table of issues via query option", query: "status != Completed", format: "table", output: `Metric      Count
-------      -----
-Issues      1
-Points      0
-Not pointed 1
-------      -----
-`},
 		{name: "can return a table of issues via query option", query: "status != Completed", storyPointDefined: true, format: "table", output: `Metric      Count
 ------      -----
 Issues      1
 Points      15
 Not pointed 0
 ------      -----
+`},
+		{name: "can return a table of issues via query option no story points", query: "status != Completed", storyPointDefined: false, format: "table", output: `Metric Count
+------ -----
+Issues 1
+------ -----
 `},
 	}
 
@@ -154,15 +158,9 @@ Not pointed 0
 			viper.Set("fields.story_point_field", "story_point_one")
 
 			// Define the mock jira issues
-			unknowns := make(map[string]interface{})
-			if tc.storyPointDefined {
-				unknowns["story_point_one"] = 15.0
-			}
-
 			fields := goJira.IssueFields{
-				Summary:  "Issue 1",
-				Status:   &goJira.Status{Name: "Todo"},
-				Unknowns: unknowns,
+				Summary: "Issue 1",
+				Status:  &goJira.Status{Name: "Todo"},
 			}
 
 			jiraIssues := goJira.Issue{
@@ -188,6 +186,20 @@ Not pointed 0
 				IssueSearch(gomock.Eq(tc.query), gomock.Eq(&searchOpts)).
 				Return(issues, nil).
 				AnyTimes()
+
+			if tc.storyPointDefined {
+				client.
+					EXPECT().
+					GetStoryPoint(gomock.Any(), gomock.Any()).
+					Return(15, nil).
+					AnyTimes()
+			} else {
+				client.
+					EXPECT().
+					GetStoryPoint(gomock.Any(), gomock.Any()).
+					Return(0, errors.New("failed to get story point value")).
+					AnyTimes()
+			}
 
 			var b bytes.Buffer
 			writer := bufio.NewWriter(&b)

@@ -125,18 +125,18 @@ func (mr *MockAPIMockRecorder) GetSprints(boardName interface{}) *gomock.Call {
 }
 
 // GetStoryPoint mocks base method.
-func (m *MockAPI) GetStoryPoint(boardName string, issue jira.Issue) (int, error) {
+func (m *MockAPI) GetStoryPoint(issue jira.Issue, boardName string) (int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetStoryPoint", boardName, issue)
+	ret := m.ctrl.Call(m, "GetStoryPoint", issue, boardName)
 	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetStoryPoint indicates an expected call of GetStoryPoint.
-func (mr *MockAPIMockRecorder) GetStoryPoint(boardName, issue interface{}) *gomock.Call {
+func (mr *MockAPIMockRecorder) GetStoryPoint(issue, boardName interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStoryPoint", reflect.TypeOf((*MockAPI)(nil).GetStoryPoint), boardName, issue)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStoryPoint", reflect.TypeOf((*MockAPI)(nil).GetStoryPoint), issue, boardName)
 }
 
 // IssueSearch mocks base method.
