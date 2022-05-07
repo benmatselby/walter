@@ -103,6 +103,12 @@ Total  1     1
 				Return([]string{"Todo"}, tc.err).
 				AnyTimes()
 
+			client.
+				EXPECT().
+				GetStoryPoint(gomock.Eq("board"), gomock.Any()).
+				Return(1, nil).
+				AnyTimes()
+
 			var b bytes.Buffer
 			writer := bufio.NewWriter(&b)
 
