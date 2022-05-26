@@ -55,7 +55,7 @@ func ListIssues(client jira.API, opts IssueOptions, w io.Writer) error {
 		projectName := opts.Args[2]
 		query += fmt.Sprintf(" and project = '%s'", projectName)
 	}
-	
+
 	if opts.FilterType != "" {
 		query += fmt.Sprintf(" and type = '%s'", opts.FilterType)
 	}
@@ -88,7 +88,12 @@ func ListIssues(client jira.API, opts IssueOptions, w io.Writer) error {
 		fmt.Fprintf(w, "\n%s\n", column)
 		fmt.Fprintf(w, strings.Repeat("=", len(column))+"\n")
 		for _, v := range items[column] {
-			fmt.Fprintf(w, "* %s - %s\n", v.Key, v.Fields.Summary)
+			sp, err := client.GetStoryPoint(v, "")
+			if err != nil {
+				fmt.Fprintf(w, "* %s - %s\n", v.Key, v.Fields.Summary)
+			} else {
+				fmt.Fprintf(w, "* (%v) %s - %s\n", sp, v.Key, v.Fields.Summary)
+			}
 		}
 	}
 	return nil

@@ -40,25 +40,25 @@ func TestNewIssuesCommandReturnsOutput(t *testing.T) {
 		err    error
 	}{
 		{
-			name: "can return a list of issues",
-			args: []string{"board", "sprint"},
-			query: "sprint = 'sprint' and type = 'Story'",
-			output: "\nTodo\n====\n* KEY-1 - Issue 1\n",
-			err: nil,
+			name:   "can return a list of issues",
+			args:   []string{"board", "sprint"},
+			query:  "sprint = 'sprint' and type = 'Story'",
+			output: "\nTodo\n====\n* (1) KEY-1 - Issue 1\n",
+			err:    nil,
 		},
 		{
-			name: "returns error if we cannot get list of issues",
-			args: []string{"board", "sprint"},
-			query: "sprint = 'sprint' and type = 'Story'",
-			output: "", 
-			err: errors.New("something"),
+			name:   "returns error if we cannot get list of issues",
+			args:   []string{"board", "sprint"},
+			query:  "sprint = 'sprint' and type = 'Story'",
+			output: "",
+			err:    errors.New("something"),
 		},
 		{
-			name: "returns a list of issue given a project name",
-			args: []string{"board", "sprint", "project"},
-			query: "sprint = 'sprint' and project = 'project' and type = 'Story'",
-			output: "\nTodo\n====\n* KEY-1 - Issue 1\n",
-			err: nil,
+			name:   "returns a list of issue given a project name",
+			args:   []string{"board", "sprint", "project"},
+			query:  "sprint = 'sprint' and project = 'project' and type = 'Story'",
+			output: "\nTodo\n====\n* (1) KEY-1 - Issue 1\n",
+			err:    nil,
 		},
 	}
 
@@ -85,6 +85,12 @@ func TestNewIssuesCommandReturnsOutput(t *testing.T) {
 				EXPECT().
 				IssueSearch(gomock.Eq(tc.query), gomock.Eq(&goJira.SearchOptions{MaxResults: 7})).
 				Return(issues, tc.err).
+				AnyTimes()
+
+			client.
+				EXPECT().
+				GetStoryPoint(gomock.Any(), "").
+				Return(1, nil).
 				AnyTimes()
 
 			client.

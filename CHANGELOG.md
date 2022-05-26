@@ -3,6 +3,7 @@
 ## next
 
 - Bumped docker image to Go 1.18 runtime.
+- Show story point values in the `sprint issues` output, if the field is defined.
 
 ## 2.3.0
 
