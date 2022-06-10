@@ -8,6 +8,7 @@ import (
 
 	goJira "github.com/andygrunwald/go-jira"
 	"github.com/benmatselby/walter/jira"
+	"github.com/benmatselby/walter/ui"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -38,7 +39,7 @@ func NewSearchCommand(client jira.API) *cobra.Command {
 
 			err := QueryIssues(client, opts, os.Stdout)
 			if err != nil {
-				fmt.Print(err)
+				fmt.Println(err)
 				os.Exit(1)
 			}
 		},
@@ -123,12 +124,6 @@ func renderTable(client jira.API, issues []goJira.Issue, w io.Writer) {
 
 func renderList(client jira.API, issues []goJira.Issue, w io.Writer) {
 	for _, issue := range issues {
-		storyPoint := ""
-		sp, err := jira.GetStoryPoint(issue, "")
-		if err == nil {
-			storyPoint = fmt.Sprintf("(%d) ", sp)
-		}
-
-		fmt.Fprintf(w, "* %s - %s%s\n", issue.Key, storyPoint, issue.Fields.Summary)
+		ui.RenderItem(w, issue)
 	}
 }

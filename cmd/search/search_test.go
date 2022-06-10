@@ -125,7 +125,7 @@ func TestQueryIssuesCanHandleStoryPoints(t *testing.T) {
 		points            float64
 		output            string
 	}{
-		{name: "can handle the happy path of the story point defined", query: "status != Completed", storyPointDefined: true, points: 15, output: "* 101 - (15) Issue 1\n"},
+		{name: "can handle the happy path of the story point defined", query: "status != Completed", storyPointDefined: true, points: 15, output: "* (15) 101 - Issue 1\n"},
 		{name: "can handle the story point field defined but not value", query: "status != Completed", storyPointDefined: false, points: 0, output: "* 101 - Issue 1\n"},
 		{name: "can return a table of issues via query option", query: "status != Completed", storyPointDefined: true, points: 15, format: "table", output: `Metric      Count
 ------      -----
