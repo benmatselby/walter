@@ -27,6 +27,14 @@ type CommandOptions struct {
 	Template   string
 }
 
+const (
+	// FormatInTable will render a table for the search results.
+	FormatInTable = "table"
+
+	// FormatInList will render a list for the search results.
+	FormatInList = "list"
+)
+
 // NewSearchCommand creates a new `search` command
 func NewSearchCommand(client jira.API) *cobra.Command {
 	var opts CommandOptions
@@ -46,7 +54,7 @@ func NewSearchCommand(client jira.API) *cobra.Command {
 	}
 
 	flags := cmd.Flags()
-	flags.StringVarP(&opts.Format, "format", "f", "list", "The format of the output: list, table")
+	flags.StringVarP(&opts.Format, "format", "f", FormatInList, fmt.Sprintf("The format of the output: %s, %s", FormatInTable, FormatInList))
 	flags.IntVar(&opts.MaxResults, "max-results", DefaultMaxResults, "The amount of records to display")
 	flags.StringVarP(&opts.Query, "query", "q", "", "The JQL you want to run")
 	flags.StringVarP(&opts.Template, "template", "t", "", "The name of the template that as the JQL you want to run")
@@ -83,7 +91,7 @@ func QueryIssues(client jira.API, opts CommandOptions, w io.Writer) error {
 		return err
 	}
 
-	if opts.Format == "table" {
+	if opts.Format == FormatInTable {
 		renderTable(client, issues, w)
 	} else {
 		renderList(client, issues, w)
