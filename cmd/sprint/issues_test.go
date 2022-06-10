@@ -10,6 +10,7 @@ import (
 	"github.com/benmatselby/walter/cmd/sprint"
 	"github.com/benmatselby/walter/jira"
 	"github.com/golang/mock/gomock"
+	"github.com/spf13/viper"
 )
 
 func TestNewIssuesCommand(t *testing.T) {
@@ -31,7 +32,7 @@ func TestNewIssuesCommand(t *testing.T) {
 	}
 }
 
-func TestNewIssuesCommandReturnsOutput(t *testing.T) {
+func TestNewIssuesCommandReturnsOutputGroupedByBoard(t *testing.T) {
 	tt := []struct {
 		name   string
 		args   []string
@@ -68,9 +69,12 @@ func TestNewIssuesCommandReturnsOutput(t *testing.T) {
 			defer ctrl.Finish()
 			client := jira.NewMockAPI(ctrl)
 
+			viper.Set("fields.story_point_field", "story_point_one")
+
 			fields := goJira.IssueFields{
-				Summary: "Issue 1",
-				Status:  &goJira.Status{Name: "Todo"},
+				Summary:  "Issue 1",
+				Status:   &goJira.Status{Name: "Todo"},
+				Unknowns: map[string]interface{}{"story_point_one": 1.0},
 			}
 
 			jiraIssues := goJira.Issue{
@@ -89,8 +93,85 @@ func TestNewIssuesCommandReturnsOutput(t *testing.T) {
 
 			client.
 				EXPECT().
-				GetStoryPoint(gomock.Any(), "").
-				Return(1, nil).
+				GetBoardLayout(gomock.Eq("board")).
+				Return([]string{"Todo"}, tc.err).
+				AnyTimes()
+
+			var b bytes.Buffer
+			writer := bufio.NewWriter(&b)
+
+			opts := sprint.IssueOptions{
+				Args:       tc.args,
+				FilterType: "Story",
+				GroupBy:    sprint.GroupByBoard,
+				MaxResults: 7,
+			}
+
+			err := sprint.ListIssues(client, opts, writer)
+			writer.Flush()
+
+			if b.String() != tc.output {
+				t.Fatalf("expected '%s'; got '%s'", tc.output, b.String())
+			}
+
+			if err != nil && err != tc.err {
+				t.Fatalf("expected err '%s'; got '%s'", tc.err, err)
+			}
+		})
+	}
+}
+
+func TestNewIssuesCommandReturnsOutputGroupedByLabel(t *testing.T) {
+	tt := []struct {
+		name   string
+		args   []string
+		query  string
+		output string
+		err    error
+	}{
+		{
+			name:   "can return a list of issues",
+			args:   []string{"board", "sprint"},
+			query:  "sprint = 'sprint' and type = 'Story'",
+			output: "\nLabel\n=====\n* (1) KEY-1 - Issue 1\n",
+			err:    nil,
+		},
+		{
+			name:   "returns error if we cannot get list of issues",
+			args:   []string{"board", "sprint"},
+			query:  "sprint = 'sprint' and type = 'Story'",
+			output: "",
+			err:    errors.New("something"),
+		},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+			client := jira.NewMockAPI(ctrl)
+
+			viper.Set("fields.story_point_field", "story_point_one")
+
+			fields := goJira.IssueFields{
+				Summary:  "Issue 1",
+				Status:   &goJira.Status{Name: "Todo"},
+				Labels:   []string{"Label"},
+				Unknowns: map[string]interface{}{"story_point_one": 1.0},
+			}
+
+			jiraIssues := goJira.Issue{
+				Key:    "KEY-1",
+				Fields: &fields,
+			}
+
+			issues := make([]goJira.Issue, 0)
+			issues = append(issues, jiraIssues)
+
+			client.
+				EXPECT().
+				IssueSearch(gomock.Eq(tc.query), gomock.Eq(&goJira.SearchOptions{MaxResults: 7})).
+				Return(issues, tc.err).
 				AnyTimes()
 
 			client.
@@ -104,8 +185,9 @@ func TestNewIssuesCommandReturnsOutput(t *testing.T) {
 
 			opts := sprint.IssueOptions{
 				Args:       tc.args,
-				MaxResults: 7,
 				FilterType: "Story",
+				GroupBy:    sprint.GroupByLabel,
+				MaxResults: 7,
 			}
 
 			err := sprint.ListIssues(client, opts, writer)

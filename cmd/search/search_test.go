@@ -97,12 +97,6 @@ Issues 1
 				Return(issues, tc.err).
 				AnyTimes()
 
-			client.
-				EXPECT().
-				GetStoryPoint(gomock.Any(), gomock.Any()).
-				Return(0, errors.New("boom")).
-				AnyTimes()
-
 			var b bytes.Buffer
 			writer := bufio.NewWriter(&b)
 
@@ -128,11 +122,12 @@ func TestQueryIssuesCanHandleStoryPoints(t *testing.T) {
 		format            string
 		query             string
 		storyPointDefined bool
+		points            float64
 		output            string
 	}{
-		{name: "can handle the happy path of the story point defined", query: "status != Completed", storyPointDefined: true, output: "* 101 - (15) Issue 1\n"},
-		{name: "can handle the story point field defined but not value", query: "status != Completed", storyPointDefined: false, output: "* 101 - Issue 1\n"},
-		{name: "can return a table of issues via query option", query: "status != Completed", storyPointDefined: true, format: "table", output: `Metric      Count
+		{name: "can handle the happy path of the story point defined", query: "status != Completed", storyPointDefined: true, points: 15, output: "* 101 - (15) Issue 1\n"},
+		{name: "can handle the story point field defined but not value", query: "status != Completed", storyPointDefined: false, points: 0, output: "* 101 - Issue 1\n"},
+		{name: "can return a table of issues via query option", query: "status != Completed", storyPointDefined: true, points: 15, format: "table", output: `Metric      Count
 ------      -----
 Issues      1
 Points      15
@@ -155,12 +150,16 @@ Issues 1
 			// Setup the configuration via Viper
 			viper.Set("templates.closed-issues.query", "status = Completed")
 			viper.Set("templates.closed-issues.count", 43)
-			viper.Set("fields.story_point_field", "story_point_one")
 
 			// Define the mock jira issues
 			fields := goJira.IssueFields{
 				Summary: "Issue 1",
 				Status:  &goJira.Status{Name: "Todo"},
+			}
+
+			if tc.storyPointDefined {
+				viper.Set("fields.story_point_field", "story_point_one")
+				fields.Unknowns = map[string]interface{}{"story_point_one": tc.points}
 			}
 
 			jiraIssues := goJira.Issue{
@@ -186,20 +185,6 @@ Issues 1
 				IssueSearch(gomock.Eq(tc.query), gomock.Eq(&searchOpts)).
 				Return(issues, nil).
 				AnyTimes()
-
-			if tc.storyPointDefined {
-				client.
-					EXPECT().
-					GetStoryPoint(gomock.Any(), gomock.Any()).
-					Return(15, nil).
-					AnyTimes()
-			} else {
-				client.
-					EXPECT().
-					GetStoryPoint(gomock.Any(), gomock.Any()).
-					Return(0, errors.New("failed to get story point value")).
-					AnyTimes()
-			}
 
 			var b bytes.Buffer
 			writer := bufio.NewWriter(&b)

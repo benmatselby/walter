@@ -85,7 +85,7 @@ func ShowBurndown(client jira.API, opts BurndownOptions, w io.Writer) error {
 		itemCount := len(items[column])
 
 		for _, item := range items[column] {
-			value, _ := client.GetStoryPoint(item, boardName)
+			value, _ := jira.GetStoryPoint(item, boardName)
 			points += value
 		}
 		totalPoints += points
