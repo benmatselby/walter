@@ -100,7 +100,7 @@ func renderTable(client jira.API, issues []goJira.Issue, w io.Writer) {
 	pointsUsed := false
 
 	for _, issue := range issues {
-		value, err := client.GetStoryPoint(issue, "")
+		value, err := jira.GetStoryPoint(issue, "")
 		if err != nil {
 			totalUnestimated++
 		} else {
@@ -124,7 +124,7 @@ func renderTable(client jira.API, issues []goJira.Issue, w io.Writer) {
 func renderList(client jira.API, issues []goJira.Issue, w io.Writer) {
 	for _, issue := range issues {
 		storyPoint := ""
-		sp, err := client.GetStoryPoint(issue, "")
+		sp, err := jira.GetStoryPoint(issue, "")
 		if err == nil {
 			storyPoint = fmt.Sprintf("(%d) ", sp)
 		}

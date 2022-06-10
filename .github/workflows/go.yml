@@ -21,6 +21,10 @@ jobs:
         run: |
           make install
 
+      - name: Lint
+        run: |
+          make lint
+
       - name: Vet
         run: |
           make vet
