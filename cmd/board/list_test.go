@@ -66,7 +66,7 @@ func TestDisplayBoards(t *testing.T) {
 			var b bytes.Buffer
 			writer := bufio.NewWriter(&b)
 
-			board.DisplayBoards(client, writer)
+			_ = board.DisplayBoards(client, writer)
 			writer.Flush()
 
 			if b.String() != tc.output {
