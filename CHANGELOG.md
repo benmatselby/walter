@@ -6,6 +6,7 @@
   - You can group by `board` or `label`. This will provide a list of issues either under the board column heading, or under each label an issue has assigned to it.
   - Note that if you group by `label` an issue may appear in the output twice, under each label.
 - Consistently render the issue (including story points if configured) in the search results.
+- The releases will now include the built binaries for different platforms/architectures.
 
 ## 2.4.0
 
