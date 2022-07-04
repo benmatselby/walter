@@ -189,7 +189,7 @@ Issues 1
 			var b bytes.Buffer
 			writer := bufio.NewWriter(&b)
 
-			search.QueryIssues(client, opts, writer)
+			_ = search.QueryIssues(client, opts, writer)
 			writer.Flush()
 
 			if b.String() != tc.output {

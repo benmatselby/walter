@@ -75,7 +75,7 @@ func TestListIssues(t *testing.T) {
 			var b bytes.Buffer
 			writer := bufio.NewWriter(&b)
 
-			board.ListIssues(client, "board", writer)
+			_ = board.ListIssues(client, "board", writer)
 			writer.Flush()
 
 			if b.String() != tc.output {

@@ -32,13 +32,9 @@ install: ## Install the local dependencies
 	go install golang.org/x/lint/golint@master
 	go get ./...
 
-.PHONY: vet
-vet: ## Vet the code
-	go vet -v ./...
-
 .PHONY: lint
-lint: ## Lint the code
-	golint -set_exit_status $(shell go list ./... | grep -v vendor)
+lint: ## Vet the code
+	golangci-lint run
 
 .PHONY: security
 security: ## Inspect the code
@@ -62,10 +58,10 @@ test-cov: test ## Run the unit tests with coverage
 	go tool cover -html=coverage.out
 
 .PHONY: all ## Run everything
-all: clean install vet build test
+all: clean install build test
 
 .PHONY: static-all ## Run everything
-static-all: clean install vet static test
+static-all: clean install static test
 
 .PHONY: docker-build
 docker-build:

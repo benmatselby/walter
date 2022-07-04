@@ -88,7 +88,7 @@ func TestDisplayBoards(t *testing.T) {
 				Args:    tc.args,
 			}
 
-			sprint.ListSprints(client, opts, writer)
+			_ = sprint.ListSprints(client, opts, writer)
 			writer.Flush()
 
 			if b.String() != tc.output {
