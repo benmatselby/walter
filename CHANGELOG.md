@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.6.0
+
+- Bumped docker image to Go 1.19 runtime.
+
 ## 2.5.0
 
 - Provide the ability to `--group-by` on the `sprint issues` command.
