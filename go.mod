@@ -1,7 +1,7 @@
 module github.com/benmatselby/walter
 
 require (
-	github.com/andygrunwald/go-jira v1.15.1
+	github.com/andygrunwald/go-jira v1.16.0
 	github.com/golang/mock v1.6.0
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
@@ -12,7 +12,7 @@ require (
 require (
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
-	github.com/golang-jwt/jwt/v4 v4.4.1 // indirect
+	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
