@@ -20,7 +20,7 @@ Available Commands:
   sprint      Sprint related commands
 
 Flags:
-      --config string   config file (default is $HOME/.benmatselby/walter.yaml)
+      --config string   config file (default is $HOME/.config/benmatselby/walter.yaml)
   -h, --help            help for walter
 
 Use "walter [command] --help" for more information about a command.
@@ -48,7 +48,7 @@ Creating a Jira API Token is documented [here](https://confluence.atlassian.com/
 
 ### Application configuration file
 
-There is also a configuration file (by default, `~/.benmatselby/walter.yaml`) that allows you to configure various things:
+There is also a configuration file (by default, `~/.config/benmatselby/walter.yaml`) that allows you to configure various things:
 
 - The story point field in your Jira instance, per board.
 - The layout of the board (Couldn't find an API to get this at the moment).
@@ -101,7 +101,7 @@ $ docker run \
   -eJIRA_TOKEN \
   -eJIRA_URL \
   -eJIRA_USERNAME \
-  -v "${HOME}/.benmatselby":/root/.benmatselby \
+  -v "${HOME}/.config/benmatselby":/root/.config/benmatselby \
   benmatselby/walter:latest "$@"
 ```
 
@@ -115,7 +115,7 @@ This would use the `verson-2.2.0` release in the docker command.
 
 **Note** - if you get the following error when running this on Windows using [docker desktop for Windows](https://hub.docker.com/editions/community/docker-ce-desktop-windows):
 
-`Failed to load config: Config File "walter" Not Found in "[/root/.benmatselby]"`
+`Failed to load config: Config File "walter" Not Found in "[/root/.config/benmatselby]"`
 
 Then you may need to reset your credentials in _[docker](http://docker.com) > Settings > Shared Drives > Reset credentials_, because it uses shared drives for mounting volumes and caches Active Directory credentials.
 

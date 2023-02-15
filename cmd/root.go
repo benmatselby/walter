@@ -44,7 +44,7 @@ func NewRootCommand(client jira.API) *cobra.Command {
 		Short: "CLI application for retrieving data from Jira",
 	}
 
-	cmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.benmatselby/walter.yaml)")
+	cmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/benmatselby/walter.yaml)")
 
 	cmd.AddCommand(
 		board.NewBoardCommand(client),
@@ -68,6 +68,7 @@ func initConfig() {
 			os.Exit(1)
 		}
 
+		viper.AddConfigPath(strings.Join([]string{home, ".config/benmatselby"}, "/"))
 		viper.AddConfigPath(strings.Join([]string{home, ".benmatselby"}, "/"))
 		viper.SetConfigName("walter")
 	}
