@@ -33,7 +33,6 @@ func TestNewListCommand(t *testing.T) {
 }
 
 func TestDisplayBoards(t *testing.T) {
-
 	tt := []struct {
 		name   string
 		output string
