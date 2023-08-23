@@ -2,6 +2,8 @@
 
 ## next
 
+## 2.7.0
+
 - Bumped docker image to Go 1.21 runtime.
 - Display story point values on the `walter board issues [board]` command.
 
