@@ -89,7 +89,12 @@ templates:
 | `templates`                | Top level node for template configuration.                                                                                                                                                                                                                                                                                                                    |
 | `fields.story_point_field` | Top the overarching story point field to be used. Long term, the commands will look at this value first, before looking at board specific values.                                                                                                                                                                                                             |
 
-## Installation via Docker
+## Installation
+
+You can install this application a few ways:
+
+<details>
+<summary>Installation via Docker</summary>
 
 Other than requiring [docker](http://docker.com) to be installed, there are no other requirements to run the application this way.
 
@@ -119,7 +124,10 @@ This would use the `verson-2.2.0` release in the docker command.
 
 Then you may need to reset your credentials in _[docker](http://docker.com) > Settings > Shared Drives > Reset credentials_, because it uses shared drives for mounting volumes and caches Active Directory credentials.
 
-## Installation via Git
+</details>
+
+<details>
+<summary>Installation via Git</summary>
 
 ```shell
 git clone git@github.com:benmatselby/walter.git
@@ -129,6 +137,17 @@ make all
 ```
 
 You can also install into your `$GOPATH/bin` by running `make build && go install`.
+
+</details>
+
+<details>
+<summary>Installation via Binaries</summary>
+
+You can download the binaries from the [release pages](https://github.com/benmatselby/walter/releases). Find the release you want, and check the "Assets" section.
+
+Once downloaded, be sure to put the binary in a folder that is referenced in your `$PATH``.
+
+</details>
 
 ## Testing
 
