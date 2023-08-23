@@ -38,7 +38,7 @@ func TestListIssues(t *testing.T) {
 		output string
 		err    error
 	}{
-		{name: "can return a list of issues", output: "\nTodo\n====\n* Issue 1\n", err: nil},
+		{name: "can return a list of issues", output: "\nTodo\n====\n* TICK1 - Issue 1\n", err: nil},
 		{name: "returns error if we cannot get list of issues", output: "", err: errors.New("something")},
 	}
 
@@ -55,6 +55,7 @@ func TestListIssues(t *testing.T) {
 
 			jiraIssues := goJira.Issue{
 				Fields: &fields,
+				Key:    "TICK1",
 			}
 
 			issues := make([]goJira.Issue, 0)
