@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
 
 	goJira "github.com/andygrunwald/go-jira"
 	"github.com/benmatselby/walter/jira"
+	"github.com/benmatselby/walter/ui"
 	"github.com/spf13/cobra"
 )
 
@@ -52,10 +52,9 @@ func ListIssues(client jira.API, boardName string, w io.Writer) error {
 	}
 
 	for _, column := range layout {
-		fmt.Fprintf(w, "\n%s\n", column)
-		fmt.Fprintf(w, strings.Repeat("=", len(column))+"\n")
+		ui.RenderTitle(w, column)
 		for _, v := range items[column] {
-			fmt.Fprintf(w, "* %s\n", v.Fields.Summary)
+			ui.RenderItem(w, v)
 		}
 	}
 	return nil
