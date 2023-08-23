@@ -92,15 +92,15 @@ func QueryIssues(client jira.API, opts CommandOptions, w io.Writer) error {
 	}
 
 	if opts.Format == FormatInTable {
-		renderTable(client, issues, w)
+		renderTable(issues, w)
 	} else {
-		renderList(client, issues, w)
+		renderList(issues, w)
 	}
 
 	return nil
 }
 
-func renderTable(client jira.API, issues []goJira.Issue, w io.Writer) {
+func renderTable(issues []goJira.Issue, w io.Writer) {
 	tw := tabwriter.NewWriter(w, 0, 1, 1, ' ', 0)
 	fmt.Fprintf(tw, "%s\t%s\n", "Metric", "Count")
 	fmt.Fprintf(tw, "%s\t%s\n", "------", "-----")
@@ -130,7 +130,7 @@ func renderTable(client jira.API, issues []goJira.Issue, w io.Writer) {
 	tw.Flush()
 }
 
-func renderList(client jira.API, issues []goJira.Issue, w io.Writer) {
+func renderList(issues []goJira.Issue, w io.Writer) {
 	for _, issue := range issues {
 		ui.RenderItem(w, issue)
 	}

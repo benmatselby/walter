@@ -83,7 +83,7 @@ func ListIssues(client jira.API, opts IssueOptions, w io.Writer) error {
 	if opts.GroupBy == GroupByBoard {
 		return renderByBoard(client, w, boardName, issues)
 	} else if opts.GroupBy == GroupByLabel {
-		return renderByTag(client, w, boardName, issues)
+		return renderByTag(w, issues)
 	} else {
 		return fmt.Errorf("%s is not a valid grouping", opts.GroupBy)
 	}
@@ -115,7 +115,7 @@ func renderByBoard(client jira.API, w io.Writer, boardName string, issues []goJi
 	return nil
 }
 
-func renderByTag(client jira.API, w io.Writer, boardName string, issues []goJira.Issue) error {
+func renderByTag(w io.Writer, issues []goJira.Issue) error {
 	labels := make(map[string][]goJira.Issue)
 
 	for _, item := range issues {
