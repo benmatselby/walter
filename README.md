@@ -154,7 +154,7 @@ Once downloaded, be sure to put the binary in a folder that is referenced in you
 To generate the code used to mock away the Jira interaction, run the following command.
 
 ```shell
-mockgen -source jira/jira.go
+make mocks
 ```
 
 This will generate you some source code you can copy into `jira/mock_jira.go`. You will need to change the package to `jira`.

@@ -73,6 +73,10 @@ test: ## Run the unit tests
 test-cov: test ## Run the unit tests with coverage
 	go tool cover -html=coverage.out
 
+.PHONY: mocks
+mocks: ## Generate the mocks for the tests
+	mockgen -source jira/jira.go
+
 .PHONY: all ## Run everything
 all: clean install build test
 
