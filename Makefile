@@ -83,6 +83,11 @@ all: clean install build test
 .PHONY: static-all ## Run everything
 static-all: clean install static test
 
+
+###
+# Docker
+###
+
 .PHONY: docker-build
 docker-build:
 	docker build -t $(DOCKER_PREFIX)/$(NAME):$(DOCKER_RELEASE) $(DOCKER_PLATFORM) .
@@ -90,3 +95,8 @@ docker-build:
 .PHONY: docker-push
 docker-push:
 	docker push $(DOCKER_PREFIX)/$(NAME):$(DOCKER_RELEASE)
+
+.PHONY: docker-scan
+docker-scan: ## Scan the docker image
+	docker scout recommendations $(DOCKER_PREFIX)/$(NAME)
+	docker scout quickview $(DOCKER_PREFIX)/$(NAME)
