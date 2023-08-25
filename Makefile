@@ -1,6 +1,7 @@
 NAME := walter
 DOCKER_PREFIX = benmatselby
 DOCKER_RELEASE ?= latest
+DOCKER_PLATFORM ?= --platform=amd64
 BUILD_DIR ?= build
 GOOS ?=
 ARCH ?=
@@ -80,7 +81,7 @@ static-all: clean install static test
 
 .PHONY: docker-build
 docker-build:
-	docker build -t $(DOCKER_PREFIX)/$(NAME):$(DOCKER_RELEASE) --platform=amd64 .
+	docker build -t $(DOCKER_PREFIX)/$(NAME):$(DOCKER_RELEASE) $(DOCKER_PLATFORM) .
 
 .PHONY: docker-push
 docker-push:

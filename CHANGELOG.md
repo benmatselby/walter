@@ -2,6 +2,8 @@
 
 ## next
 
+- Allow the caller of `make docker-build` to specify the Docker platform.
+
 ## 2.7.0
 
 - Bumped docker image to Go 1.21 runtime.
