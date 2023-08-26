@@ -2,7 +2,10 @@
 
 ## next
 
+## 2.8.0
+
 - Allow the caller of `make docker-build` to specify the Docker platform.
+- Add in the release version to the auto-generated binaries during a release.
 
 ## 2.7.0
 
