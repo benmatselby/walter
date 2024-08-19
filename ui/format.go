@@ -12,7 +12,7 @@ import (
 // RenderTitle will produce an underlined title.
 func RenderTitle(w io.Writer, title string) {
 	fmt.Fprintf(w, "\n%s\n", title)
-	fmt.Fprintf(w, strings.Repeat("=", len(title))+"\n")
+	fmt.Fprintf(w, "%s", strings.Repeat("=", len(title))+"\n")
 }
 
 // RenderItem understands how to render a single work item.
