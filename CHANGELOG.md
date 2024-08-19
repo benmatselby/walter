@@ -2,6 +2,8 @@
 
 ## next
 
+- Bumped Go version to 1.23 runtime.
+
 ## 2.8.0
 
 - Allow the caller of `make docker-build` to specify the Docker platform.
