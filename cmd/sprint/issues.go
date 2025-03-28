@@ -80,11 +80,12 @@ func ListIssues(client jira.API, opts IssueOptions, w io.Writer) error {
 		return err
 	}
 
-	if opts.GroupBy == GroupByBoard {
+	switch opts.GroupBy {
+	case GroupByBoard:
 		return renderByBoard(client, w, boardName, issues)
-	} else if opts.GroupBy == GroupByLabel {
+	case GroupByLabel:
 		return renderByTag(w, issues)
-	} else {
+	default:
 		return fmt.Errorf("%s is not a valid grouping", opts.GroupBy)
 	}
 }
