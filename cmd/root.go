@@ -20,7 +20,7 @@ var cfgFile string
 // This is called by main.main(). It only needs to happen once
 func Execute() {
 	// We need the configuration loaded before we create a NewCli
-	// as that needs the viper configration up and running
+	// as that needs the viper configuration up and running
 	initConfig()
 
 	// Build a new client
