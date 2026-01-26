@@ -1,4 +1,4 @@
-FROM golang:1.25.5-alpine as builder
+FROM golang:1.25.6-alpine as builder
 LABEL maintainer="Ben Selby <benmatselby@gmail.com>"
 
 ENV APPNAME walter
